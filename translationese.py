@@ -1,6 +1,18 @@
 from memoize import memoize
 import nltk
 
+def makeRegistrar():
+    registry = {}
+    def registrar(func):
+        registry[func.__name__] = func
+        return func
+    registrar.all = registry
+    return registrar
+
+# Create the @translationese_property decorator, so we can collect
+# them later.
+translationese_property = makeRegistrar()
+
 class Analysis(object):
     def __init__(self, obj):
         if isinstance(obj, file):
@@ -35,23 +47,39 @@ class Analysis(object):
     def tokens_set(self):
         return set(self.tokens())
 
-    def most_frequent_words(self, n):
-        words_freqs = [
+    @memoize
+    def words_freqs(self):
+        result = [
                        (t, self.tokens().count(t))
                        for t in self.tokens_set()
                        ]
-        words_freqs.sort(key = lambda x: x[1], reverse = True)
+        result.sort(key = lambda x: x[1], reverse = True)
 
-        return [ x[1] / float(len(self.tokens()))
-                 for x in words_freqs[0:n]]
+        return [ x[1] / float(len(self.tokens())) for x in result ]
 
+    # FIXME: These need to be auto-generated.
+    @translationese_property
+    def most_frequent_words_3(self):
+        return self.words_freqs()[2]
+
+    @translationese_property
+    def most_frequent_words_2(self):
+        return self.words_freqs()[1]
+
+    @translationese_property
+    def most_frequent_words_1(self):
+        return self.words_freqs()[0]
+
+    @translationese_property
     def type_token_ratio(self):
         return len(self.tokens_set()) / float(len(self.tokens()))
 
+    @translationese_property
     def mean_word_length(self):
         real_words = [w for w in self.tokens() if w[0].isalpha()]
         return float(sum([len(w) for w in real_words])) / len(real_words)
 
+    @translationese_property
     def average_sentence_length(self):
         sentence_length = lambda sentence: len(nltk.word_tokenize(sentence))
 

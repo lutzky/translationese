@@ -19,10 +19,10 @@ class MostFrequentWordsTest(unittest.TestCase):
     def test_simple(self):
         a = translationese.Analysis("Hello hello hello cruel cruel world")
 
-        self.assertEqual([0.5, 1/3.0, 1/6.0], a.most_frequent_words(3))
+        self.assertEqual([0.5, 1/3.0, 1/6.0], a.words_freqs())
 
 class AverageSentenceLengthTest(unittest.TestCase):
     def test_simple(self):
         a = translationese.Analysis("Hello there. How now, brown cow?")
-        
+
         self.assertEquals(4.5, a.average_sentence_length())
