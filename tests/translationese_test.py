@@ -21,3 +21,9 @@ class MostFrequentWordsTest(unittest.TestCase):
 
         self.assertEqual([0.5, 1/3.0, 1/6.0],
                          translationese.most_frequent_words(s, 3))
+
+class AverageSentenceLengthTest(unittest.TestCase):
+    def test_simple(self):
+        s = "Hello there. How now, brown cow?"
+        
+        self.assertEquals(4.5, translationese.average_sentence_length(s))
