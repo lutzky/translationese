@@ -3,27 +3,26 @@ import translationese
 
 class TypeTokenRatioTest(unittest.TestCase):
     def test_simple(self):
-        s = """Hello hello world world"""
+        a = translationese.Analysis("""Hello hello world world""")
 
-        self.assertEqual(0.5, translationese.type_token_ratio(s))
+        self.assertEqual(0.5, a.type_token_ratio())
 
 class MeanWordLength(unittest.TestCase):
     def test_simple(self):
-        s1 = """hello there luzky!"""
-        s2 = """is good-will"""
+        a1 = translationese.Analysis("""hello there luzky!""")
+        a2 = translationese.Analysis("""is good-will""")
 
-        self.assertEqual(5, translationese.mean_word_length(s1))
-        self.assertEqual(5.5, translationese.mean_word_length(s2))
+        self.assertEqual(5, a1.mean_word_length())
+        self.assertEqual(5.5, a2.mean_word_length())
 
 class MostFrequentWordsTest(unittest.TestCase):
     def test_simple(self):
-        s = "Hello hello hello cruel cruel world"
+        a = translationese.Analysis("Hello hello hello cruel cruel world")
 
-        self.assertEqual([0.5, 1/3.0, 1/6.0],
-                         translationese.most_frequent_words(s, 3))
+        self.assertEqual([0.5, 1/3.0, 1/6.0], a.most_frequent_words(3))
 
 class AverageSentenceLengthTest(unittest.TestCase):
     def test_simple(self):
-        s = "Hello there. How now, brown cow?"
+        a = translationese.Analysis("Hello there. How now, brown cow?")
         
-        self.assertEquals(4.5, translationese.average_sentence_length(s))
+        self.assertEquals(4.5, a.average_sentence_length())

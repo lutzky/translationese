@@ -18,10 +18,9 @@ AVAILABLE_PROPERTIES = [
                        ]
 
 def analyze_file(f, properties):
-    full_text = f.read()
+    analysis = translationese.Analysis(f)
     
-    return [ translationese.__dict__[prop](full_text)
-               for prop in properties ]
+    return [ getattr(analysis, prop)() for prop in properties ]
 
 def analyze_directory(dir_to_analyze, expected_class, properties):
     for filename in os.listdir(dir_to_analyze):
