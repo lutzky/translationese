@@ -14,3 +14,18 @@ def mean_word_length(s):
 
     real_words = [w for w in words if w[0].isalpha()]
     return float(sum([len(w) for w in real_words])) / len(real_words)
+
+def type_token_ratio(s):
+    # We tokenize into sentences and then into words due to a warning
+    # in the NLTK API doc to only word_tokenize single sentences.
+
+    sentences = nltk.sent_tokenize(s)
+    
+    words = []
+
+    for sentence in sentences:
+        words += [ w.upper() for w in nltk.word_tokenize(sentence) ]
+
+    words_set = set(words)
+
+    return len(set(words)) / float(len(words))
