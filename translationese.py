@@ -1,5 +1,18 @@
 import nltk
 
+def get_words(s):
+    # We tokenize into sentences and then into words due to a warning
+    # in the NLTK API doc to only word_tokenize single sentences.
+
+    sentences = nltk.sent_tokenize(s)
+
+    words = []
+
+    for sentence in sentences:
+        words += nltk.word_tokenize(sentence)
+
+    return words
+
 def average_sentence_length(s):
     sentence_length = lambda sentence: len(nltk.word_tokenize(sentence))
 
@@ -16,16 +29,17 @@ def mean_word_length(s):
     return float(sum([len(w) for w in real_words])) / len(real_words)
 
 def type_token_ratio(s):
-    # We tokenize into sentences and then into words due to a warning
-    # in the NLTK API doc to only word_tokenize single sentences.
-
-    sentences = nltk.sent_tokenize(s)
+    words = [ w.upper() for w in get_words(s) ]
     
-    words = []
+    return len(set(words)) / float(len(words))
 
-    for sentence in sentences:
-        words += [ w.upper() for w in nltk.word_tokenize(sentence) ]
+def most_frequent_words(s, n):
+    words = [ w.upper() for w in get_words(s) ]
 
     words_set = set(words)
 
-    return len(set(words)) / float(len(words))
+    words_freqs = [ (w, words.count(w)) for w in words_set ]
+
+    words_freqs.sort(key = lambda x: x[1], reverse = True)
+
+    return [ x[1] / float(len(words)) for x in words_freqs[0:n]]
