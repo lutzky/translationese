@@ -49,13 +49,14 @@ class Analysis(object):
 
     @memoize
     def words_freqs(self):
-        result = [
-                       (t, self.tokens().count(t))
-                       for t in self.tokens_set()
-                       ]
-        result.sort(key = lambda x: x[1], reverse = True)
+        histogram = {}
 
-        return [ x[1] / float(len(self.tokens())) for x in result ]
+        for t in self.tokens():
+            histogram[t] = histogram.get(t, 0) + 1
+
+        num_tokens = float(len(self.tokens()))
+        normalized = [ x[1] / num_tokens for x in histogram.items() ]
+        return sorted(normalized, reverse = True)
 
     # FIXME: These need to be auto-generated.
     @translationese_property
