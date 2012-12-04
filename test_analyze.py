@@ -29,7 +29,7 @@ class TestAnalyze(unittest.TestCase):
 lexical_variety_result = """\
 @relation translationese
 @attribute class { T, O }
-@attribute type_token_ratio numeric
+@attribute 'type_token_ratio' numeric
 
 @data
 O,0.714285714286

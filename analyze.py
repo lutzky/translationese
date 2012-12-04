@@ -34,7 +34,7 @@ def main(module, o_dir, t_dir, stream=sys.stdout):
     print >> stream, "@attribute class { T, O }"
 
     for attribute in attributes:
-        print >> stream, "@attribute %s numeric" % attribute
+        print >> stream, "@attribute %s numeric" % repr(attribute)
 
     print >> stream
     print >> stream, "@data"
