@@ -1,5 +1,5 @@
 import unittest
-import translationese
+import translationese.lexical_variety
 
 class TypeTokenRatioTest(unittest.TestCase):
     def test_simple(self):
