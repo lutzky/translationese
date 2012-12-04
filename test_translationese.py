@@ -1,6 +1,27 @@
 import unittest
 import translationese
 
+class Histogram(unittest.TestCase):
+    def test_simple(self):
+        sentence = "How much wood would a woodchuck chuck if a " \
+            "woodchuck could chuck wood?"
+        a = translationese.Analysis(sentence)
+        self.assertEquals(
+                          {
+                           "how": 1/14.0,
+                           "much": 1/14.0,
+                           "wood": 2/14.0,
+                           "would": 1/14.0,
+                           "a": 2/14.0,
+                           "woodchuck": 2/14.0,
+                           "if": 1/14.0,
+                           "chuck": 2/14.0,
+                           "could": 1/14.0,
+                           "?": 1/14.0,
+                           },
+                          a.histogram_normalized()
+                          )
+
 class TypeTokenRatioTest(unittest.TestCase):
     def test_simple(self):
         a = translationese.Analysis("""Hello hello world world""")
@@ -14,12 +35,6 @@ class MeanWordLength(unittest.TestCase):
 
         self.assertEqual(5, a1.mean_word_length())
         self.assertEqual(5.5, a2.mean_word_length())
-
-class MostFrequentWordsTest(unittest.TestCase):
-    def test_simple(self):
-        a = translationese.Analysis("Hello hello hello cruel cruel world")
-
-        self.assertEqual([0.5, 1/3.0, 1/6.0], a.words_freqs())
 
 class AverageSentenceLengthTest(unittest.TestCase):
     def test_simple(self):

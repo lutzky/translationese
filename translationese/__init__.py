@@ -48,28 +48,20 @@ class Analysis(object):
         return set(self.tokens())
 
     @memoize
-    def words_freqs(self):
-        histogram = {}
-
+    def histogram(self):
+        """Return a dictionary { "TOKEN": NUMBER_OF_OCCURENCES, ... }"""
+        result = {}
         for t in self.tokens():
-            histogram[t] = histogram.get(t, 0) + 1
+            result[t] = result.get(t, 0) + 1
+        return result
 
+    @memoize
+    def histogram_normalized(self):
+        """Returns histogram normalized by number of tokens"""
+        items = self.histogram().items()
         num_tokens = float(len(self.tokens()))
-        normalized = [ x[1] / num_tokens for x in histogram.items() ]
-        return sorted(normalized, reverse = True)
-
-    # FIXME: These need to be auto-generated.
-    @translationese_property
-    def most_frequent_words_3(self):
-        return self.words_freqs()[2]
-
-    @translationese_property
-    def most_frequent_words_2(self):
-        return self.words_freqs()[1]
-
-    @translationese_property
-    def most_frequent_words_1(self):
-        return self.words_freqs()[0]
+        items_normalized = [ (x, y / num_tokens) for x, y in items ]
+        return dict(items_normalized)
 
     @translationese_property
     def type_token_ratio(self):
