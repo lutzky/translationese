@@ -9,10 +9,6 @@ def makeRegistrar():
     registrar.all = registry
     return registrar
 
-# Create the @translationese_property decorator, so we can collect
-# them later.
-translationese_property = makeRegistrar()
-
 class Analysis(object):
     def __init__(self, obj):
         if isinstance(obj, file):
@@ -63,16 +59,10 @@ class Analysis(object):
         items_normalized = [ (x, y / num_tokens) for x, y in items ]
         return dict(items_normalized)
 
-    @translationese_property
-    def type_token_ratio(self):
-        return len(self.tokens_set()) / float(len(self.tokens()))
-
-    @translationese_property
     def mean_word_length(self):
         real_words = [w for w in self.tokens() if w[0].isalpha()]
         return float(sum([len(w) for w in real_words])) / len(real_words)
 
-    @translationese_property
     def average_sentence_length(self):
         sentence_length = lambda sentence: len(nltk.word_tokenize(sentence))
 

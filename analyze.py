@@ -11,43 +11,52 @@ import os
 import sys
 import translationese
 
-def analyze_file(f, properties):
+def analyze_file(f, module):
     analysis = translationese.Analysis(f)
 
-    return [ getattr(analysis, prop)() for prop in properties ]
+    return module.quantify(analysis)
 
-def analyze_directory(dir_to_analyze, expected_class, properties):
+def analyze_directory(dir_to_analyze, expected_class, module, stream):
     for filename in os.listdir(dir_to_analyze):
         with open(os.path.join(dir_to_analyze, filename)) as f:
-            analysis = [expected_class]
-            analysis += analyze_file(f, properties)
-            print ",".join([str(x) for x in analysis])
+            result = analyze_file(f, module)
 
-def main(o_dir, t_dir):
-    # TODO: Properties should be selected in command-line.
-    properties = translationese.translationese_property.all.keys()
+            stream.write(expected_class)
+            stream.write(",")
 
-    print "@relation translationese"
-    print "@attribute class { T, O }"
+            line = ",".join([str(result[x]) for x in module.attributes])
+            print >> stream, line
 
-    for prop in properties:
-        print "@attribute %s numeric" % prop
+def main(module, o_dir, t_dir, stream=sys.stdout):
+    attributes = module.attributes
 
-    print
-    print "@data"
+    print >> stream, "@relation translationese"
+    print >> stream, "@attribute class { T, O }"
 
-    analyze_directory(o_dir, "O", properties)
-    analyze_directory(t_dir, "T", properties)
+    for attribute in attributes:
+        print >> stream, "@attribute %s numeric" % attribute
 
-if __name__ == '__main__':
-    if len(sys.argv) < 3 or \
-        not os.path.isdir(sys.argv[1]) or \
-        not os.path.isdir(sys.argv[2]):
-        print """\
-Usage: %s O_DIR T_DIR
+    print >> stream
+    print >> stream, "@data"
 
+    analyze_directory(o_dir, "O", module, stream)
+    analyze_directory(t_dir, "T", module, stream)
+
+def usage(due_to_error=True):
+    print """\
+Usage: %s MODULE O_DIR T_DIR
+
+    MODULE  Analysis module
     O_DIR   Directory containing non-translated texts
     T_DIR   Directory containing translated texts""" % sys.argv[0]
-        sys.exit(1)
+    if due_to_error: sys.exit(1)
 
-    main(sys.argv[1], sys.argv[2])
+if __name__ == '__main__':
+    if len(sys.argv) < 4: usage()
+
+    module_name, o_dir, t_dir = sys.argv[1:]
+
+    module = __import__("translationese.%s" % module_name, \
+                        fromlist=module_name)
+
+    main(module, o_dir, t_dir)

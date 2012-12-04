@@ -22,12 +22,6 @@ class Histogram(unittest.TestCase):
                           a.histogram_normalized()
                           )
 
-class TypeTokenRatioTest(unittest.TestCase):
-    def test_simple(self):
-        a = translationese.Analysis("""Hello hello world world""")
-
-        self.assertEqual(0.5, a.type_token_ratio())
-
 class MeanWordLength(unittest.TestCase):
     def test_simple(self):
         a1 = translationese.Analysis("""hello there luzky!""")
