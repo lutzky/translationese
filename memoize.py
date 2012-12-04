@@ -38,17 +38,3 @@ class memoize(object):
         except KeyError:
             res = cache[key] = self.func(*args, **kw)
         return res
-
-
-if __name__ == "__main__":
-    # example usage
-    class Test(object):
-        v = 0
-        @memoize
-        def inc_add(self, arg):
-            self.v += 1
-            return self.v + arg
-
-    t = Test()
-    assert t.inc_add(2) == t.inc_add(2)
-    assert Test.inc_add(t, 2) != Test.inc_add(t, 2)

@@ -1,14 +1,6 @@
 from memoize import memoize
 import nltk
 
-def makeRegistrar():
-    registry = {}
-    def registrar(func):
-        registry[func.__name__] = func
-        return func
-    registrar.all = registry
-    return registrar
-
 class Analysis(object):
     def __init__(self, obj):
         if isinstance(obj, file):
