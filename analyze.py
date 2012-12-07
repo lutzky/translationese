@@ -19,7 +19,11 @@ def analyze_file(f, module):
 def analyze_directory(dir_to_analyze, expected_class, module, stream):
     for filename in os.listdir(dir_to_analyze):
         with open(os.path.join(dir_to_analyze, filename)) as f:
-            result = analyze_file(f, module)
+            try:
+                result = analyze_file(f, module)
+            except Exception, ex:
+                print "Error analyzing file %s" % filename
+                raise
 
             stream.write(expected_class)
             stream.write(",")
