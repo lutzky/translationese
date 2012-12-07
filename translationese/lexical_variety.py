@@ -39,6 +39,10 @@ class LexicalVarietyQuantifier:
         return 6 * math.log(self.num_types) / math.log(self.num_tokens)
 
     def unique_type_token_ratio(self):
+        # All tokens are unique - infinite lexical variety
+        if self.num_unique_tokens == self.num_types:
+            return float("infinity")
+
         return 100 * math.log(self.num_tokens) / \
             (1 - (self.num_unique_tokens / float(self.num_types)))
 
