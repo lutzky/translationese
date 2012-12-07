@@ -32,8 +32,8 @@ lexical_variety_result = """\
 @attribute 'type_token_ratio' numeric
 
 @data
-O,0.714285714286
-O,0.714285714286
-T,0.8
-T,1.0
+O,4.28571428571
+O,4.28571428571
+T,4.8
+T,6.0
 """

@@ -1,9 +1,14 @@
 import unittest
-import translationese.lexical_variety
+from translationese import lexical_variety
+import translationese
+import math
 
 class TypeTokenRatioTest(unittest.TestCase):
     def test_simple(self):
-        a = translationese.Analysis("""Hello hello world world""")
-        result = translationese.lexical_variety.quantify(a)
-
-        self.assertEqual(0.5, result["type_token_ratio"])
+        a = translationese.Analysis("""Hello hello world world.""")
+        quantifier = lexical_variety.LexicalVarietyQuantifier(a)
+        self.assertAlmostEqual(6 * (3 / 5.0), quantifier.type_token_ratio(), 1)
+        self.assertAlmostEqual(6 * math.log(3) / math.log(5.0),
+                               quantifier.log_type_token_ratio(), 1)
+        self.assertAlmostEqual(100 * math.log(5.0) / (1 - 1 / 3.0),
+                               quantifier.unique_type_token_ratio(), 1)
