@@ -1,5 +1,6 @@
 from memoize import memoize
 import nltk
+from nltk.tag import pos_tag
 
 class Analysis(object):
     def __init__(self, obj):
@@ -24,6 +25,10 @@ class Analysis(object):
             tokens += nltk.word_tokenize(sentence)
 
         return tokens
+
+    @memoize
+    def pos_tags(self):
+        return nltk.pos_tag(self.tokens())
 
     @memoize
     def tokens(self):
@@ -52,6 +57,7 @@ class Analysis(object):
         return dict(items_normalized)
 
     def mean_word_length(self):
+        """Written by Gal Star"""
         real_words = [w for w in self.tokens() if w[0].isalpha()]
         return float(sum([len(w) for w in real_words])) / len(real_words)
 
@@ -60,3 +66,15 @@ class Analysis(object):
 
         return float(sum([sentence_length(x) for x in self.sentences()])) \
              / len(self.sentences())
+
+    def lexical_density(self):
+        """Written by Gal Star"""
+        is_not_verb = lambda letter: letter !='V'
+        is_not_noun = lambda letter: letter !='N'
+        is_not_adjective = lambda letter: letter !='J'
+        is_not_adverb = lambda letter: letter !='R'
+        
+        is_lexical_density = lambda l: is_not_verb(l) and is_not_noun(l) and \
+            is_not_adjective(l) and is_not_adverb(l)
+        
+        return float(len([x for (x,y) in self.pos_tags() if is_lexical_density(y[0])])) / len(self.tokens())
