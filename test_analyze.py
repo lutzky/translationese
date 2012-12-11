@@ -12,7 +12,7 @@ import os.path
 
 class TestAnalyze(unittest.TestCase):
     def setUp(self):
-        tests_dir = os.path.join(os.path.dirname(__file__), "tests")
+        tests_dir = os.path.join(os.path.dirname(__file__), "test_data")
         self.o_dir = os.path.join(tests_dir, "o")
         self.t_dir = os.path.join(tests_dir, "t")
 
