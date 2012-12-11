@@ -60,3 +60,12 @@ class Analysis(object):
 
         return float(sum([sentence_length(x) for x in self.sentences()])) \
              / len(self.sentences())
+
+    @memoize
+    def bigrams(self):
+        """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
+        result = {}
+        for i in range(len(self.tokens()) - 1):
+            bigram = (self.tokens()[i], self.tokens()[i + 1])
+            result[bigram] = result.get(bigram, 0) + 1
+        return result

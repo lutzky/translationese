@@ -35,3 +35,16 @@ class AverageSentenceLengthTest(unittest.TestCase):
         a = translationese.Analysis("Hello there. How now, brown cow?")
 
         self.assertEquals(4.5, a.average_sentence_length())
+
+class Utilities(unittest.TestCase):
+    def test_bigrams(self):
+        a = translationese.Analysis("Which witch should watch which witch watch?")
+        self.assertDictEqual(a.bigrams(),
+                             {
+                              ("which", "witch"): 2,
+                              ("witch", "should"): 1,
+                              ("should", "watch"): 1,
+                              ("watch", "which"): 1,
+                              ("witch", "watch"): 1,
+                              ("watch", "?"): 1,
+                            })
