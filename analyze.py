@@ -17,7 +17,7 @@ def analyze_file(f, analyzer_module):
     return analyzer_module.quantify(analysis)
 
 def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream):
-    for filename in os.listdir(dir_to_analyze):
+    for filename in sorted(os.listdir(dir_to_analyze)):
         with open(os.path.join(dir_to_analyze, filename)) as f:
             try:
                 result = analyze_file(f, analyzer_module)
