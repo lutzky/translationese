@@ -11,28 +11,29 @@ import os
 import sys
 import translationese
 
-def analyze_file(f, module):
+def analyze_file(f, analyzer_module):
     analysis = translationese.Analysis(f)
 
-    return module.quantify(analysis)
+    return analyzer_module.quantify(analysis)
 
-def analyze_directory(dir_to_analyze, expected_class, module, stream):
-    for filename in os.listdir(dir_to_analyze):
+def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream):
+    for filename in sorted(os.listdir(dir_to_analyze)):
         with open(os.path.join(dir_to_analyze, filename)) as f:
             try:
-                result = analyze_file(f, module)
-            except Exception, ex:
+                result = analyze_file(f, analyzer_module)
+            except:
                 print "Error analyzing file %s" % filename
                 raise
 
             stream.write(expected_class)
             stream.write(",")
 
-            line = ",".join([str(result[x]) for x in module.attributes])
+            line = ",".join([str(result[x]) for x in
+                             analyzer_module.attributes])
             print >> stream, line
 
-def main(module, o_dir, t_dir, stream=sys.stdout):
-    attributes = module.attributes
+def main(analyzer_module, o_dir, t_dir, stream=sys.stdout):
+    attributes = analyzer_module.attributes
 
     print >> stream, "@relation translationese"
     print >> stream, "@attribute class { T, O }"
@@ -43,8 +44,8 @@ def main(module, o_dir, t_dir, stream=sys.stdout):
     print >> stream
     print >> stream, "@data"
 
-    analyze_directory(o_dir, "O", module, stream)
-    analyze_directory(t_dir, "T", module, stream)
+    analyze_directory(o_dir, "O", analyzer_module, stream)
+    analyze_directory(t_dir, "T", analyzer_module, stream)
 
 def usage(due_to_error=True):
     print """\
@@ -58,9 +59,9 @@ Usage: %s MODULE O_DIR T_DIR
 if __name__ == '__main__':
     if len(sys.argv) < 4: usage()
 
-    module_name, o_dir, t_dir = sys.argv[1:]
+    module_name, param_o_dir, param_t_dir = sys.argv[1:]
 
     module = __import__("translationese.%s" % module_name, \
                         fromlist=module_name)
 
-    main(module, o_dir, t_dir)
+    main(module, param_o_dir, param_t_dir)

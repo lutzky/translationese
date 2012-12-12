@@ -43,3 +43,16 @@ class LexicalDensity(unittest.TestCase):
         
         self.assertEqual(0.5, a1.lexical_density())
         self.assertEqual(3.0/4.0, a2.lexical_density())
+
+class Utilities(unittest.TestCase):
+    def test_bigrams(self):
+        a = translationese.Analysis("Which witch should watch which witch watch?")
+        self.assertDictEqual(a.bigrams(),
+                             {
+                              ("which", "witch"): 2,
+                              ("witch", "should"): 1,
+                              ("should", "watch"): 1,
+                              ("watch", "which"): 1,
+                              ("witch", "watch"): 1,
+                              ("watch", "?"): 1,
+                            })

@@ -16,8 +16,6 @@ class TestPronouns(unittest.TestCase):
         self.assertAlmostEqual(1.0 / 11.0, result["we"])
         self.assertAlmostEqual(1.0 / 11.0, result["them"])
         self.assertNotIn("are", result)
-        pass
-
 
 if __name__ == "__main__":
     unittest.main()

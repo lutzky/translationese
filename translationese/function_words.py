@@ -3,8 +3,6 @@ Created on Dec 4, 2012
 
 @author: ohad
 '''
-import translationese
-
 
 FUNCTION_WORDS = ['a',
  'about',

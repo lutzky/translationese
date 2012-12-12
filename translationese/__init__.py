@@ -78,3 +78,13 @@ class Analysis(object):
             is_not_adjective(l) and is_not_adverb(l)
         
         return float(len([x for (x,y) in self.pos_tags() if is_lexical_density(y[0])])) / len(self.tokens())
+
+    @memoize
+    def bigrams(self):
+        """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
+        result = {}
+        for i in range(len(self.tokens()) - 1):
+            bigram = (self.tokens()[i], self.tokens()[i + 1])
+            result[bigram] = result.get(bigram, 0) + 1
+        return result
+
