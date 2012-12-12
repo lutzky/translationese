@@ -1,5 +1,5 @@
 language: python
 python:
   - "2.7"
-install: "pip install nltk --use-mirrors; python -c 'import nltk;nltk.download(\"all\")'"
+install: "pip install nltk --use-mirrors; python -c 'import nltk;nltk.download(\"punkt\")'"
 script: nosetests
