@@ -5,4 +5,4 @@ install:
   - pip install nltk --use-mirrors
   - python -c 'import nltk; nltk.download("punkt")'
   - python -c 'import nltk; nltk.download("maxent_treebank_pos_tagger")'
-script: nosetests
+script: nosetests -v
