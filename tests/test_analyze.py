@@ -20,7 +20,6 @@ class TestAnalyze(unittest.TestCase):
         s = StringIO.StringIO()
         analyze.main(module, self.o_dir, self.t_dir, s)
         self.assertMultiLineEqual(expected, s.getvalue())
-        pass
 
     def testWithLexicalVariety(self):
         self.assertResultForModule(translationese.lexical_variety, \
