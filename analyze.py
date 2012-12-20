@@ -25,22 +25,21 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream):
                 print "Error analyzing file %s" % filename
                 raise
 
-            stream.write(expected_class)
-            stream.write(",")
-
             line = ",".join([str(result[x]) for x in
                              analyzer_module.attributes])
-            print >> stream, line
+
+            print >> stream, "%s,%s" % (line, expected_class)
 
 def main(analyzer_module, o_dir, t_dir, stream=sys.stdout):
     attributes = analyzer_module.attributes
 
     print >> stream, "@relation translationese"
-    print >> stream, "@attribute class { T, O }"
 
     for attribute in attributes:
         print >> stream, "@attribute %s numeric" % repr(attribute)
 
+    # Class attribute should be last, as this is the weka default.
+    print >> stream, "@attribute class { T, O }"
     print >> stream
     print >> stream, "@data"
 
