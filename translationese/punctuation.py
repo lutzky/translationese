@@ -5,7 +5,6 @@ Origin: On the Features of Translationese, VV, NO & SW
         4.5 Miscellaneous, Punctuation
 """
 import translationese
-from twisted.python.reflect import isinst
 
 main_attributes = [ '?', '!', ':', ';', '-', '(', ')', '[', ']',
                     "'", '"', '/', ',', '.' ]
