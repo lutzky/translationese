@@ -17,14 +17,18 @@ class TestAnalyze(unittest.TestCase):
         self.o_dir = os.path.join(tests_dir, "o")
         self.t_dir = os.path.join(tests_dir, "t")
 
-    def assertResultForModule(self, module, variant, expected):
+    def assertResultForModule(self, module, expected, variant=None):
         s = StringIO.StringIO()
         analyze.main(module, self.o_dir, self.t_dir, s, variant)
         self.assertMultiLineEqual(expected, s.getvalue())
 
+    def testWithPunctuation(self):
+        self.assertResultForModule(translationese.punctuation,
+                                   punctuation_result)
+
     def testWithLexicalVariety(self):
-        self.assertResultForModule(translationese.lexical_variety, 1, \
-                                   lexical_variety_result)
+        self.assertResultForModule(translationese.lexical_variety,
+                                   lexical_variety_result, 1)
 
 lexical_variety_result = """\
 @relation translationese
@@ -36,4 +40,29 @@ lexical_variety_result = """\
 4.96252485208,O
 6.0,T
 5.16811869688,T
+"""
+
+punctuation_result = """\
+@relation translationese
+@attribute '?' numeric
+@attribute '!' numeric
+@attribute ':' numeric
+@attribute ';' numeric
+@attribute '-' numeric
+@attribute '(' numeric
+@attribute ')' numeric
+@attribute '[' numeric
+@attribute ']' numeric
+@attribute "'" numeric
+@attribute '"' numeric
+@attribute '/' numeric
+@attribute ',' numeric
+@attribute '.' numeric
+@attribute class { T, O }
+
+@data
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,O
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,O
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,T
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,T
 """
