@@ -22,14 +22,6 @@ class Histogram(unittest.TestCase):
                           a.histogram_normalized()
                           )
 
-class MeanWordLength(unittest.TestCase):
-    def test_simple(self):
-        a1 = translationese.Analysis("""hello there luzky!""")
-        a2 = translationese.Analysis("""is good-will""")
-
-        self.assertEqual(5, a1.mean_word_length())
-        self.assertEqual(5.5, a2.mean_word_length())
-
 class Utilities(unittest.TestCase):
     def test_bigrams(self):
         a = translationese.Analysis("Which witch should watch which witch watch?")

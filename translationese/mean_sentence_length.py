@@ -1,5 +1,5 @@
 """\
-Implementation of Lexical Variety hypothesis.
+Implementation of Mean Sentence Length hypothesis.
 
 Origin: On the Features of Translationese, VV, NO & SW
         4.1 Simplification, Mean Sentence Length

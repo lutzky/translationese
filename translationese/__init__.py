@@ -51,10 +51,6 @@ class Analysis(object):
         items_normalized = [ (x, y / num_tokens) for x, y in items ]
         return dict(items_normalized)
 
-    def mean_word_length(self):
-        real_words = [w for w in self.tokens() if w[0].isalpha()]
-        return float(sum([len(w) for w in real_words])) / len(real_words)
-
     @memoize
     def bigrams(self):
         """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
