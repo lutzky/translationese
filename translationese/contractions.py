@@ -49,7 +49,7 @@ CONTRACTIONS = {
  "didn't": [ "did not" ],
 }
 
-attributes = CONTRACTIONS.keys()
+attributes = sorted(CONTRACTIONS.keys())
 
 def _tokenize_contracion(contraction):
     prefix, suffix = contraction.split("'")

@@ -23,8 +23,8 @@ class TestAnalyze(unittest.TestCase):
         self.assertMultiLineEqual(expected, s.getvalue())
 
     def testWithPunctuation(self):
-        self.assertResultForModule(translationese.punctuation,
-                                   punctuation_result)
+        self.assertResultForModule(translationese.contractions,
+                                   contractions_result)
 
     def testWithLexicalVariety(self):
         self.assertResultForModule(translationese.lexical_variety,
@@ -39,7 +39,7 @@ class TestAnalyze(unittest.TestCase):
 
     def testExtraVariant(self):
         def tryToQuantifyWithVariant():
-            module = translationese.punctuation
+            module = translationese.contractions
             analyze.main(module, self.o_dir, self.t_dir, variant=0)
         self.assertRaises(translationese.NoVariants, \
                           tryToQuantifyWithVariant)
@@ -63,27 +63,54 @@ lexical_variety_result = """\
 5.16811869688,T
 """
 
-punctuation_result = """\
+contractions_result = """\
 @relation translationese
-@attribute '?' numeric
-@attribute '!' numeric
-@attribute ':' numeric
-@attribute ';' numeric
-@attribute '-' numeric
-@attribute '(' numeric
-@attribute ')' numeric
-@attribute '[' numeric
-@attribute ']' numeric
-@attribute "'" numeric
-@attribute '"' numeric
-@attribute '/' numeric
-@attribute ',' numeric
-@attribute '.' numeric
+@attribute "can't" numeric
+@attribute "couldn't" numeric
+@attribute "didn't" numeric
+@attribute "doesn't" numeric
+@attribute "don't" numeric
+@attribute "he'd" numeric
+@attribute "he'll" numeric
+@attribute "he's" numeric
+@attribute "here's" numeric
+@attribute "how's" numeric
+@attribute "i'd" numeric
+@attribute "i'll" numeric
+@attribute "i'm" numeric
+@attribute "i've" numeric
+@attribute "it's" numeric
+@attribute "let's" numeric
+@attribute "must've" numeric
+@attribute "she'd" numeric
+@attribute "she'll" numeric
+@attribute "she's" numeric
+@attribute "should've" numeric
+@attribute "there's" numeric
+@attribute "they'd" numeric
+@attribute "they'll" numeric
+@attribute "they're" numeric
+@attribute "they've" numeric
+@attribute "we'd" numeric
+@attribute "we'll" numeric
+@attribute "we're" numeric
+@attribute "we've" numeric
+@attribute "what's" numeric
+@attribute "where's" numeric
+@attribute "who're" numeric
+@attribute "who's" numeric
+@attribute "who've" numeric
+@attribute "would've" numeric
+@attribute "wouldn't" numeric
+@attribute "you'd" numeric
+@attribute "you'll" numeric
+@attribute "you're" numeric
+@attribute "you've" numeric
 @attribute class { T, O }
 
 @data
-0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,O
-0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,O
-0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,T
-0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,T
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,O
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,O
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,T
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,T
 """
