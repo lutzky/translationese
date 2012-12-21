@@ -30,12 +30,6 @@ class MeanWordLength(unittest.TestCase):
         self.assertEqual(5, a1.mean_word_length())
         self.assertEqual(5.5, a2.mean_word_length())
 
-class AverageSentenceLengthTest(unittest.TestCase):
-    def test_simple(self):
-        a = translationese.Analysis("Hello there. How now, brown cow?")
-
-        self.assertEquals(4.5, a.average_sentence_length())
-
 class Utilities(unittest.TestCase):
     def test_bigrams(self):
         a = translationese.Analysis("Which witch should watch which witch watch?")

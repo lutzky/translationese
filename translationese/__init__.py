@@ -55,12 +55,6 @@ class Analysis(object):
         real_words = [w for w in self.tokens() if w[0].isalpha()]
         return float(sum([len(w) for w in real_words])) / len(real_words)
 
-    def average_sentence_length(self):
-        sentence_length = lambda sentence: len(nltk.word_tokenize(sentence))
-
-        return float(sum([sentence_length(x) for x in self.sentences()])) \
-             / len(self.sentences())
-
     @memoize
     def bigrams(self):
         """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
