@@ -88,3 +88,25 @@ class Analysis(object):
             result[bigram] = result.get(bigram, 0) + 1
         return result
 
+import exceptions
+class MissingVariant(exceptions.Exception): pass
+class NoVariants(exceptions.Exception): pass
+
+class NoSuchVariant(exceptions.Exception):
+    def __init__(self, analyzed_module=None):
+        if analyzed_module is None:
+            Exception.__init__(self, "Invalid variant requested")
+            return
+
+        modname = analyzed_module.__name__
+
+        variant_attributes = analyzed_module.variant_attributes
+        if isinstance(variant_attributes, list):
+            message = "Valid variants for %s are 0..%d" % \
+                (modname, len(variant_attributes) - 1)
+        elif isinstance(analyzed_module.variant_attributes, dict):
+            message = "Valid variants for %s are 0..%d" % \
+                (modname, variant_attributes.keys())
+        else:
+            message = "Invalid variant for module %s" % modname
+        Exception.__init__(self, message)

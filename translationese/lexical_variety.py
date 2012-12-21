@@ -10,10 +10,10 @@ __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
 
 
-attributes = [
-    "type_token_ratio",
-    "log_type_token_ratio",
-    "unique_type_token_ratio",
+variant_attributes = [
+    [ "TTR1" ],
+    [ "TTR2" ],
+    [ "TTR3" ],
 ]
 
 class LexicalVarietyQuantifier:
@@ -46,6 +46,16 @@ class LexicalVarietyQuantifier:
         return 100 * math.log(self.num_tokens) / \
             (1 - (self.num_unique_tokens / float(self.num_types)))
 
-def quantify(analysis):
+def quantify_variant(analysis, variant):
     quantifier = LexicalVarietyQuantifier(analysis)
-    return dict([ (k, getattr(quantifier, k)()) for k in attributes ])
+    variant_analyzers = {
+                         0: quantifier.type_token_ratio,
+                         1: quantifier.log_type_token_ratio,
+                         2: quantifier.unique_type_token_ratio,
+                         }
+    if variant in variant_analyzers:
+        attribute_name = "TTR%d" % (variant + 1)
+        return { attribute_name: variant_analyzers[variant]() }
+    else:
+        raise AttributeError("No variant %d for module %s" % \
+                             (variant, __name__))

@@ -17,25 +17,73 @@ class TestAnalyze(unittest.TestCase):
         self.o_dir = os.path.join(tests_dir, "o")
         self.t_dir = os.path.join(tests_dir, "t")
 
-    def assertResultForModule(self, module, expected):
+    def assertResultForModule(self, module, expected, variant=None):
         s = StringIO.StringIO()
-        analyze.main(module, self.o_dir, self.t_dir, s)
+        analyze.main(module, self.o_dir, self.t_dir, s, variant)
         self.assertMultiLineEqual(expected, s.getvalue())
 
+    def testWithPunctuation(self):
+        self.assertResultForModule(translationese.punctuation,
+                                   punctuation_result)
+
     def testWithLexicalVariety(self):
-        self.assertResultForModule(translationese.lexical_variety, \
-                                   lexical_variety_result)
+        self.assertResultForModule(translationese.lexical_variety,
+                                   lexical_variety_result, 1)
+
+    def testMissingVariant(self):
+        def tryToQuantifyWithoutVariant():
+            module = translationese.lexical_variety
+            analyze.main(module, self.o_dir, self.t_dir)
+        self.assertRaises(translationese.MissingVariant, \
+                          tryToQuantifyWithoutVariant)
+
+    def testExtraVariant(self):
+        def tryToQuantifyWithVariant():
+            module = translationese.punctuation
+            analyze.main(module, self.o_dir, self.t_dir, variant=0)
+        self.assertRaises(translationese.NoVariants, \
+                          tryToQuantifyWithVariant)
+
+    def testUndefinedVariant(self):
+        def tryToQuantifyWithVariant():
+            module = translationese.lexical_variety
+            analyze.main(module, self.o_dir, self.t_dir, variant=5)
+        self.assertRaises(translationese.NoSuchVariant, \
+                          tryToQuantifyWithVariant)
 
 lexical_variety_result = """\
 @relation translationese
-@attribute 'type_token_ratio' numeric
-@attribute 'log_type_token_ratio' numeric
-@attribute 'unique_type_token_ratio' numeric
+@attribute 'TTR2' numeric
 @attribute class { T, O }
 
 @data
-4.28571428571,5.23501721729,659.764332404,O
-4.28571428571,4.96252485208,486.477537264,O
-6.0,6.0,inf,T
-4.8,5.16811869688,643.775164974,T
+5.23501721729,O
+4.96252485208,O
+6.0,T
+5.16811869688,T
+"""
+
+punctuation_result = """\
+@relation translationese
+@attribute '?' numeric
+@attribute '!' numeric
+@attribute ':' numeric
+@attribute ';' numeric
+@attribute '-' numeric
+@attribute '(' numeric
+@attribute ')' numeric
+@attribute '[' numeric
+@attribute ']' numeric
+@attribute "'" numeric
+@attribute '"' numeric
+@attribute '/' numeric
+@attribute ',' numeric
+@attribute '.' numeric
+@attribute class { T, O }
+
+@data
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,O
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,O
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,T
+0.0005,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,T
 """

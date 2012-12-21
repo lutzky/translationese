@@ -18,3 +18,18 @@ class TypeTokenRatioTest(unittest.TestCase):
         quantifier = lexical_variety.LexicalVarietyQuantifier(a)
         self.assertEqual(float("infinity"),
                          quantifier.unique_type_token_ratio())
+
+    def test_quantifier_variants(self):
+        a = translationese.Analysis("""Hello hello world world.""")
+
+        result = lexical_variety.quantify_variant(a, 0)
+        expected = { "TTR1": 6 * (3/ 5.0) }
+        self.assertDictEqual(expected, result)
+
+        result = lexical_variety.quantify_variant(a, 1)
+        expected = { "TTR2": 6 * math.log(3) / math.log(5.0) }
+        self.assertDictEqual(expected, result)
+
+        result = lexical_variety.quantify_variant(a, 2)
+        expected = { "TTR3": 100 * math.log(5.0) / (1 - 1 / 3.0) }
+        self.assertDictEqual(expected, result)
