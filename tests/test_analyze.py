@@ -30,6 +30,27 @@ class TestAnalyze(unittest.TestCase):
         self.assertResultForModule(translationese.lexical_variety,
                                    lexical_variety_result, 1)
 
+    def testMissingVariant(self):
+        def tryToQuantifyWithoutVariant():
+            module = translationese.lexical_variety
+            analyze.main(module, self.o_dir, self.t_dir)
+        self.assertRaises(translationese.MissingVariant, \
+                          tryToQuantifyWithoutVariant)
+
+    def testExtraVariant(self):
+        def tryToQuantifyWithVariant():
+            module = translationese.punctuation
+            analyze.main(module, self.o_dir, self.t_dir, variant=0)
+        self.assertRaises(translationese.NoVariants, \
+                          tryToQuantifyWithVariant)
+
+    def testUndefinedVariant(self):
+        def tryToQuantifyWithVariant():
+            module = translationese.lexical_variety
+            analyze.main(module, self.o_dir, self.t_dir, variant=5)
+        self.assertRaises(translationese.NoSuchVariant, \
+                          tryToQuantifyWithVariant)
+
 lexical_variety_result = """\
 @relation translationese
 @attribute 'TTR2' numeric

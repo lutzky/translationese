@@ -40,9 +40,19 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
 
 def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     if variant is None:
-        attributes = analyzer_module.attributes
+        if hasattr(analyzer_module, "attributes"):
+            attributes = analyzer_module.attributes
+        else:
+            raise translationese.MissingVariant("%s requires a variant to be specified" % \
+                                                analyzer_module.__name__)
     else:
-        attributes = analyzer_module.variant_attributes[variant]
+        try:
+            attributes = analyzer_module.variant_attributes[variant]
+        except AttributeError, ex:
+            raise translationese.NoVariants("%s does not support variants" % \
+                                            analyzer_module.__name__)
+        except IndexError, ex:
+            raise translationese.NoSuchVariant(analyzer_module)
 
     print >> stream, "@relation translationese"
 
@@ -91,4 +101,4 @@ if __name__ == '__main__':
         if not os.path.isdir(dir_path):
             parser.error("No such directory %r (run with --help)" % dir_path)
 
-    main(module, options.o_dir, options.t_dir, options.variant)
+    main(module, options.o_dir, options.t_dir, variant=options.variant)
