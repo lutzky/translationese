@@ -23,14 +23,8 @@ def quantify(analysis):
                is_not_adjective
     
     def count_all_lexical_pos_tags():
-        count = 0
         text = analysis.pos_tags()
-        
-        for i in range(len(text)):
-            if is_lexical_density(text[i][1]):
-                count += 1
-                
-        return count
+        return len([t for t in text if is_lexical_density(t[1])])
     
     result = float(count_all_lexical_pos_tags()) / len(all_tags)
     return { "lexical_density": result }
