@@ -18,6 +18,7 @@ def quantify(analysis):
         
     is_lexical_density = lambda l: is_not_verb(l) and is_not_noun(l) and \
             is_not_adjective(l) and is_not_adverb(l)
-        
-    return dict(loat(len([x for (x,y) in analysis.pos_tags() if is_lexical_density(y[0])])) / len(analysis.tokens()))
+    
+    
+    return float(len([x for (x,y) in analysis.pos_tags() if is_lexical_density(y[0])])) / len(analysis.tokens())
 

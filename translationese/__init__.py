@@ -67,18 +67,6 @@ class Analysis(object):
         return float(sum([sentence_length(x) for x in self.sentences()])) \
              / len(self.sentences())
 
-    def lexical_density(self):
-        """Written by Gal Star"""
-        is_not_verb = lambda letter: letter !='V'
-        is_not_noun = lambda letter: letter !='N'
-        is_not_adjective = lambda letter: letter !='J'
-        is_not_adverb = lambda letter: letter !='R'
-        
-        is_lexical_density = lambda l: is_not_verb(l) and is_not_noun(l) and \
-            is_not_adjective(l) and is_not_adverb(l)
-        
-        return float(len([x for (x,y) in self.pos_tags() if is_lexical_density(y[0])])) / len(self.tokens())
-
     @memoize
     def bigrams(self):
         """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
