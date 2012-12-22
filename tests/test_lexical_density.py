@@ -1,8 +1,6 @@
 import unittest
 from translationese import lexical_density
-import math
 import translationese
-
 
 class LexcialDensityTest(unittest.TestCase):
     def test_simple(self):
@@ -13,3 +11,8 @@ class LexcialDensityTest(unittest.TestCase):
         self.assertEqual(0.0, quantifier1)
         quantifier2 = lexical_density.quantify(a2)
         self.assertEqual((7.0)/(15.0), quantifier2)
+        
+        a3 = translationese.Analysis("""we will go tomorrow to see a movie""")
+        a4 = translationese.Analysis("""What about punctuation?""")
+        self.assertEqual(0.5, a3.lexical_density())
+        self.assertEqual(3.0/4.0, a4.lexical_density())
