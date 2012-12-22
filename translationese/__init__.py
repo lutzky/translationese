@@ -1,5 +1,6 @@
 from memoize import memoize
 import nltk
+from nltk.tag import pos_tag
 import math
 
 expected_chunk_size = 2000.0
@@ -27,6 +28,10 @@ class Analysis(object):
             tokens += nltk.word_tokenize(sentence)
 
         return tokens
+
+    @memoize
+    def pos_tags(self):
+        return nltk.pos_tag(self.tokens())
 
     @memoize
     def tokens(self):
