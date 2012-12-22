@@ -2,6 +2,8 @@ from memoize import memoize
 import nltk
 import math
 
+expected_chunk_size = 2000.0
+
 class Analysis(object):
     def __init__(self, obj):
         if isinstance(obj, file):

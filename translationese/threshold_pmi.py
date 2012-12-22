@@ -13,5 +13,5 @@ attributes = "threshold_pmi"
 def quantify(analysis):
     pmi = analysis.pmi()
     positive_pmi = [ x for x in pmi.values() if x > 0 ]
-    normalized_result = len(positive_pmi) / 2000.0
+    normalized_result = len(positive_pmi) / translationese.expected_chunk_size
     return { "threshold_pmi": normalized_result }
