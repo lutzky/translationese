@@ -1,6 +1,9 @@
 from memoize import memoize
 import nltk
 from nltk.tag import pos_tag
+import math
+
+expected_chunk_size = 2000.0
 
 class Analysis(object):
     def __init__(self, obj):
@@ -64,6 +67,22 @@ class Analysis(object):
             bigram = (self.tokens()[i], self.tokens()[i + 1])
             result[bigram] = result.get(bigram, 0) + 1
         return result
+
+    def pmi(self):
+        num_bigrams = float(len(self.tokens()) - 1)
+        bigrams_normalized = dict([ (x, y/num_bigrams)
+                                    for (x,y) in self.bigrams().items() ])
+        freq = self.histogram_normalized()
+
+        bigram_pmi = lambda bigram, bigram_freq: \
+                math.log(bigram_freq / (freq[bigram[0]] * freq[bigram[1]]))
+
+        bigram_pmi_pairs = [
+                (bigram, bigram_pmi(bigram, bigram_freq))
+                for (bigram, bigram_freq) in bigrams_normalized.items()
+                ]
+
+        return dict(bigram_pmi_pairs)
 
 import exceptions
 class MissingVariant(exceptions.Exception): pass

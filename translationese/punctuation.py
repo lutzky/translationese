@@ -30,7 +30,7 @@ def quantify_variant(analysis, variant):
     count, histogram = count_punctuation_marks(analysis)
 
     divideby = [
-                2000.0,
+                translationese.expected_chunk_size,
                 # The following two are magnified by 4.0, as in the paper
                 len(analysis.tokens()) / 4.0,
                 float(count) / 4.0,
