@@ -103,6 +103,19 @@ Usage: %s MODULE O_DIR T_DIR
     T_DIR   Directory containing translated texts""" % sys.argv[0]
     if due_to_error: sys.exit(1)
 
+def get_output_stream(auto_outfile, variant, module_name):
+    if auto_outfile:
+        if variant is None:
+            outfile_name = "%s.arff" % module_name
+        else:
+            outfile_name = "%s_%d.arff" % (module_name, variant)
+
+        outfile = open(outfile_name, "w")
+    else:
+        outfile = sys.stdout
+
+    return outfile
+
 if __name__ == '__main__':
     from optparse import OptionParser
     _timer = Timer()
@@ -113,6 +126,8 @@ if __name__ == '__main__':
                       help="Directory of T (translated) texts\n[default: %default]")
     parser.add_option("-o", dest="o_dir", default='./t/',
                       help="Directory of O (original) texts [default: %default]")
+    parser.add_option("--auto-outfile", dest="auto_outfile", action="store_true",
+                      help="Write output to MODULE[_VARIANT].arff")
 
     options, args = parser.parse_args()
 
@@ -129,5 +144,9 @@ if __name__ == '__main__':
         if not os.path.isdir(dir_path):
             parser.error("No such directory %r (run with --help)" % dir_path)
 
-    main(module, options.o_dir, options.t_dir, variant=options.variant)
+    outfile = get_output_stream(options.auto_outfile, options.variant, \
+                                module_name)
+
+    main(module, options.o_dir, options.t_dir, variant=options.variant, \
+            stream=outfile)
     if _timer: _timer.finish()
