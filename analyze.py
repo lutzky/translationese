@@ -31,7 +31,7 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
             try:
                 result = analyze_file(f, analyzer_module, variant)
             except:
-                print "Error analyzing file %s" % filename
+                print >> sys.stderr, "Error analyzing file %s" % filename
                 raise
 
             line = ",".join([str(result[x]) for x in attributes])
