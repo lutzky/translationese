@@ -10,6 +10,30 @@ for use with weka."""
 import os
 import sys
 import translationese
+import time
+
+class Timer:
+    def __init__(self, report_every = 10, stream=sys.stderr):
+        self.report_every = report_every
+        self.stream = stream
+
+    def start(self):
+        self.started_at = time.time()
+        self.count = 0
+
+    def increment(self):
+        self.count += 1
+        if self.count % self.report_every == 0:
+            elapsed = time.time() - self.started_at
+            average_ms = 1000.0 * (elapsed / self.count)
+            self.stream.write(\
+                    "\r[%5d] %d seconds elapsed, (%.2f ms each)" \
+                    % (self.count, elapsed, average_ms))
+
+    def finish(self):
+        self.stream.write("\n")
+
+_timer = None
 
 def analyze_file(f, analyzer_module, variant=None):
     analysis = translationese.Analysis(f)
@@ -37,6 +61,7 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
             line = ",".join([str(result[x]) for x in attributes])
 
             print >> stream, "%s,%s" % (line, expected_class)
+            if _timer: _timer.increment()
 
 def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     if variant is None:
@@ -64,6 +89,8 @@ def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     print >> stream
     print >> stream, "@data"
 
+    if _timer: _timer.start()
+
     analyze_directory(o_dir, "O", analyzer_module, stream, variant)
     analyze_directory(t_dir, "T", analyzer_module, stream, variant)
 
@@ -78,6 +105,7 @@ Usage: %s MODULE O_DIR T_DIR
 
 if __name__ == '__main__':
     from optparse import OptionParser
+    _timer = Timer()
     parser = OptionParser("%prog [options] MODULE")
     parser.add_option("-v", "--variant", dest="variant", default=None,
                       type="int", help="Variant for analysis module")
@@ -102,3 +130,4 @@ if __name__ == '__main__':
             parser.error("No such directory %r (run with --help)" % dir_path)
 
     main(module, options.o_dir, options.t_dir, variant=options.variant)
+    if _timer: _timer.finish()
