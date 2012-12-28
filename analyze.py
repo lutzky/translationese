@@ -11,6 +11,7 @@ import os
 import sys
 import translationese
 import time
+import pkgutil
 
 class Timer:
     def __init__(self, report_every = 10, stream=sys.stderr):
@@ -94,14 +95,9 @@ def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     analyze_directory(o_dir, "O", analyzer_module, stream, variant)
     analyze_directory(t_dir, "T", analyzer_module, stream, variant)
 
-def usage(due_to_error=True):
-    print """\
-Usage: %s MODULE O_DIR T_DIR
-
-    MODULE  Analysis module
-    O_DIR   Directory containing non-translated texts
-    T_DIR   Directory containing translated texts""" % sys.argv[0]
-    if due_to_error: sys.exit(1)
+def available_modules():
+    iterator = pkgutil.iter_modules(['translationese'])
+    return ( x[1] for x in iterator )
 
 def get_output_stream(auto_outfile, variant, module_name):
     if auto_outfile:
@@ -119,7 +115,12 @@ def get_output_stream(auto_outfile, variant, module_name):
 if __name__ == '__main__':
     from optparse import OptionParser
     _timer = Timer()
-    parser = OptionParser("%prog [options] MODULE")
+
+    usage="%%prog [options] MODULE\n\n" \
+            "Available modules:\n%s" % \
+            "\n".join([ "  %s" % x for x in available_modules() ])
+
+    parser = OptionParser(usage=usage)
     parser.add_option("-v", "--variant", dest="variant", default=None,
                       type="int", help="Variant for analysis module")
     parser.add_option("-t", dest="t_dir", default='./o/',
