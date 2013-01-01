@@ -5,6 +5,15 @@ import math
 
 expected_chunk_size = 2000.0
 
+def flatten_list(l):
+    """Returns a flat list given a list of lists.
+
+    >>> flatten_list([[1,2],[3,4],[5,6]])
+    [1, 2, 3, 4, 5, 6]
+    """
+
+    return [ item for sublist in l for item in sublist ]
+
 class Analysis(object):
     def __init__(self, obj):
         if isinstance(obj, file):
@@ -31,7 +40,13 @@ class Analysis(object):
 
     @memoize
     def pos_tags(self):
-        return nltk.pos_tag(self.tokens())
+        list_of_lists = nltk.batch_pos_tag(self.tokenized_sentences())
+        return flatten_list(list_of_lists)
+
+    @memoize
+    def tokenized_sentences(self):
+        sentences = [ s.lower() for s in self.sentences() ]
+        return [ nltk.word_tokenize(s) for s in sentences ]
 
     @memoize
     def tokens(self):
