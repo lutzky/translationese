@@ -63,9 +63,26 @@ class Analysis(object):
         return tokens
 
     @memoize.memoize
+    def pos_tags_by_sentence(self):
+        """Return part-of-speech tags, split by sentence.
+
+        >>> Analysis("I am fine. How are you?").pos_tags_by_sentence()
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [[('i', 'PRP'), ('am', 'VBP'), ('fine', 'NN'), ('.', '.')],
+        [('how', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]]
+        """
+        return nltk.batch_pos_tag(self.tokenized_sentences())
+
+    @memoize.memoize
     def pos_tags(self):
-        list_of_lists = nltk.batch_pos_tag(self.tokenized_sentences())
-        return flatten_list(list_of_lists)
+        """Return part-of-speech tags, for the entire document.
+
+        >>> Analysis("I am fine. How are you?").pos_tags()
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [('i', 'PRP'), ('am', 'VBP'), ('fine', 'NN'), ('.', '.'),
+        ('how', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]
+        """
+        return flatten_list(self.pos_tags_by_sentence())
 
     @memoize.memoize
     def tokenized_sentences(self):
