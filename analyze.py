@@ -12,6 +12,7 @@ import sys
 import translationese
 import time
 import pkgutil
+import logging
 
 class Timer:
     def __init__(self, report_every = 10, stream=sys.stderr):
@@ -58,7 +59,7 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
         try:
             result = analyze_file(filename, analyzer_module, variant)
         except:
-            print >> sys.stderr, "Error analyzing file %s" % filename
+            logging.error("Error analyzing file %s", filename)
             raise
 
         results.append((result, expected_class))
