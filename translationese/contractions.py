@@ -5,6 +5,8 @@ Origin: On the Features of Translationese, VV, NO & SW
         4.3 Normalization, Contractions
 """
 
+import nltk
+
 CONTRACTIONS = {
  "i'm": ["i am"],
  "it's": ["it is", "it has"],
@@ -51,15 +53,11 @@ CONTRACTIONS = {
 
 attributes = sorted(CONTRACTIONS.keys())
 
-def _tokenize_contracion(contraction):
-    prefix, suffix = contraction.split("'")
-    return (prefix, "'%s" % suffix)
-
 def quantify(analysis):
     histogram = analysis.bigrams()
 
     def contraction_ratio(contraction):
-        tokenized = _tokenize_contracion(contraction)
+        tokenized = tuple(nltk.word_tokenize(contraction))
         contracted_count = histogram.get(tokenized, 0)
 
         if contracted_count == 0: return 0

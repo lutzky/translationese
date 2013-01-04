@@ -22,5 +22,10 @@ class TestContractions(unittest.TestCase):
         result = contractions.quantify(a)
         self.assertAlmostEqual(0.5, result["what's"])
 
+    def testWouldNot(self):
+        a = Analysis("what's wouldn't would not would not")
+        result = contractions.quantify(a)
+        self.assertAlmostEqual(0.5, result["wouldn't"])
+
 if __name__ == "__main__":
     unittest.main()
