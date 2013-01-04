@@ -5,6 +5,7 @@ Origin: On the Features of Translationese, VV, NO & SW
         4.1 Simplification, Lexical Variety
 """
 import math
+from translationese import NoSuchVariant
 
 __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
@@ -57,5 +58,4 @@ def quantify_variant(analysis, variant):
         attribute_name = "TTR%d" % (variant + 1)
         return { attribute_name: variant_analyzers[variant]() }
     else:
-        raise AttributeError("No variant %d for module %s" % \
-                             (variant, __name__))
+        raise NoSuchVariant()

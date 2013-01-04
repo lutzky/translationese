@@ -45,12 +45,10 @@ def analyze_file(filename, analyzer_module, variant=None):
         else:
             return analyzer_module.quantify(analysis)
 
-def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
+def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
                       variant=None):
-    if variant is None:
-        attributes = analyzer_module.attributes
-    else:
-        attributes = analyzer_module.variant_attributes[variant]
+    attributes = set()
+    results = []
 
     for filename in sorted(os.listdir(dir_to_analyze)):
         if filename.endswith(".analysis"):
@@ -63,28 +61,20 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
             print >> sys.stderr, "Error analyzing file %s" % filename
             raise
 
-        line = ",".join([str(result[x]) for x in attributes])
+        results.append((result, expected_class))
 
-        print >> stream, "%s,%s" % (line, expected_class)
-        if _timer: _timer.increment()
+    return results
 
-def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
-    if variant is None:
-        if hasattr(analyzer_module, "attributes"):
-            attributes = analyzer_module.attributes
-        else:
-            raise translationese.MissingVariant("%s requires a variant to be specified" % \
-                                                analyzer_module.__name__)
-    else:
-        try:
-            attributes = analyzer_module.variant_attributes[variant]
-        except AttributeError, ex:
-            raise translationese.NoVariants("%s does not support variants" % \
-                                            analyzer_module.__name__)
-        except IndexError, ex:
-            raise translationese.NoSuchVariant(analyzer_module)
+def print_results(results, stream):
+    attributes = set()
 
     print >> stream, "@relation translationese"
+
+    for result, _ in results:
+        attributes.update(result.keys())
+
+    attributes = list(attributes)
+    attributes.sort()
 
     for attribute in attributes:
         print >> stream, "@attribute %s numeric" % repr(attribute)
@@ -94,10 +84,29 @@ def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     print >> stream
     print >> stream, "@data"
 
+    for result, expected_class in results:
+        line = ",".join([str(result[x]) for x in attributes])
+
+        print >> stream, "%s,%s" % (line, expected_class)
+        if _timer: _timer.increment()
+
+def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
+    if variant is None:
+        if not hasattr(analyzer_module, "quantify"):
+            raise translationese.MissingVariant("%s requires a variant to be specified" % \
+                                                analyzer_module.__name__)
+    elif not hasattr(analyzer_module, "quantify_variant"):
+        raise translationese.NoVariants("%s does not support variants" % \
+                                        analyzer_module.__name__)
+
     if _timer: _timer.start()
 
-    analyze_directory(o_dir, "O", analyzer_module, stream, variant)
-    analyze_directory(t_dir, "T", analyzer_module, stream, variant)
+    results = []
+
+    results += analyze_directory(o_dir, "O", analyzer_module, variant)
+    results += analyze_directory(t_dir, "T", analyzer_module, variant)
+
+    print_results(results, stream)
 
 def available_modules():
     iterator = pkgutil.iter_modules(['translationese'])
