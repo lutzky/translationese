@@ -17,13 +17,31 @@
 """
 
 from functools import wraps
+import cPickle as pickle
+import os
+import logging
+
+logger = logging.getLogger("memoize")
 
 def memoize(func):
     @wraps(func)
     def wrapper(self):
-        if not hasattr(self, "__memoize_cache"):
-            self.__memoize_cache = {}
-        if func.func_name not in self.__memoize_cache:
-            self.__memoize_cache[func.func_name] = func(self)
-        return self.__memoize_cache[func.func_name]
+        if not hasattr(self, "_memoize_cache"):
+            self._memoize_cache = {}
+        if func.func_name not in self._memoize_cache:
+            self._memoize_cache[func.func_name] = func(self)
+        return self._memoize_cache[func.func_name]
     return wrapper
+
+def load(obj, filename):
+    try:
+        if os.path.exists(filename):
+            with open(filename, "r") as f:
+                obj._memoize_cache = pickle.load(f)
+    except Exception, e:
+        logging.warn("Invalid pickle file %s", filename)
+
+def dump(obj, filename):
+    if hasattr(obj, "_memoize_cache"):
+        with open(filename, "w") as f:
+            pickle.dump(obj._memoize_cache, f)

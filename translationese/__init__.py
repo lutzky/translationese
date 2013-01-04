@@ -1,4 +1,4 @@
-from memoize import memoize
+import memoize
 import nltk
 from nltk.tag import pos_tag
 import math
@@ -15,19 +15,43 @@ def flatten_list(l):
     return [ item for sublist in l for item in sublist ]
 
 class Analysis(object):
-    def __init__(self, obj):
-        if isinstance(obj, file):
-            self.fulltext = obj.read()
-        elif isinstance(obj, str):
-            self.fulltext = obj
+    def __init__(self, fulltext = None, stream = None, filename = None):
+        self.filename = None
+        if fulltext:
+            self.fulltext = fulltext
+        elif stream:
+            self.fulltext = stream.read()
+        elif filename:
+            self.filename = filename
+            self.fulltext = open(filename, "r").read()
+            self.picklefile = "%s.analysis" % filename
         else:
-            raise AttributeError
+            raise AttributeError()
 
-    @memoize
+    def __enter__(self):
+        self.loadcache()
+        return self
+
+    def __exit__(self, type, value, tb):
+        if tb is not None:
+            # An exception was thrown, do not save pickle
+            return False
+        self.savecache()
+
+    def loadcache(self):
+        if not self.picklefile:
+            raise AttributeError('Cannot use Analysis in "with" block '
+                                 'unless constructed with a filename.')
+        memoize.load(self, self.picklefile)
+
+    def savecache(self):
+        memoize.dump(self, self.picklefile)
+
+    @memoize.memoize
     def sentences(self):
         return nltk.sent_tokenize(self.fulltext)
 
-    @memoize
+    @memoize.memoize
     def case_tokens(self):
         # We tokenize into sentences and then into words due to a warning
         # in the NLTK API doc to only word_tokenize single sentences.
@@ -38,27 +62,27 @@ class Analysis(object):
 
         return tokens
 
-    @memoize
+    @memoize.memoize
     def pos_tags(self):
         list_of_lists = nltk.batch_pos_tag(self.tokenized_sentences())
         return flatten_list(list_of_lists)
 
-    @memoize
+    @memoize.memoize
     def tokenized_sentences(self):
         sentences = [ s.lower() for s in self.sentences() ]
         return [ nltk.word_tokenize(s) for s in sentences ]
 
-    @memoize
+    @memoize.memoize
     def tokens(self):
         """Tokens are always in lowercase. For tokens with the original
         case, use case_tokens()."""
         return [ w.lower() for w in self.case_tokens() ]
 
-    @memoize
+    @memoize.memoize
     def tokens_set(self):
         return set(self.tokens())
 
-    @memoize
+    @memoize.memoize
     def histogram(self):
         """Return a dictionary { "TOKEN": NUMBER_OF_OCCURENCES, ... }"""
         result = {}
@@ -66,7 +90,7 @@ class Analysis(object):
             result[t] = result.get(t, 0) + 1
         return result
 
-    @memoize
+    @memoize.memoize
     def histogram_normalized(self):
         """Returns histogram normalized by number of tokens"""
         items = self.histogram().items()
@@ -74,7 +98,7 @@ class Analysis(object):
         items_normalized = [ (x, y / num_tokens) for x, y in items ]
         return dict(items_normalized)
 
-    @memoize
+    @memoize.memoize
     def bigrams(self):
         """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
         result = {}

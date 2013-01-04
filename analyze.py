@@ -36,13 +36,12 @@ class Timer:
 
 _timer = None
 
-def analyze_file(f, analyzer_module, variant=None):
-    analysis = translationese.Analysis(f)
-
-    if variant is not None:
-        return analyzer_module.quantify_variant(analysis, variant)
-    else:
-        return analyzer_module.quantify(analysis)
+def analyze_file(filename, analyzer_module, variant=None):
+    with translationese.Analysis(filename = filename) as analysis:
+        if variant is not None:
+            return analyzer_module.quantify_variant(analysis, variant)
+        else:
+            return analyzer_module.quantify(analysis)
 
 def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
                       variant=None):
@@ -52,17 +51,20 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module, stream,
         attributes = analyzer_module.variant_attributes[variant]
 
     for filename in sorted(os.listdir(dir_to_analyze)):
-        with open(os.path.join(dir_to_analyze, filename)) as f:
-            try:
-                result = analyze_file(f, analyzer_module, variant)
-            except:
-                print >> sys.stderr, "Error analyzing file %s" % filename
-                raise
+        if filename.endswith(".analysis"):
+            # This is a cached analysis, skip it.
+            continue
+        filename = os.path.join(dir_to_analyze, filename)
+        try:
+            result = analyze_file(filename, analyzer_module, variant)
+        except:
+            print >> sys.stderr, "Error analyzing file %s" % filename
+            raise
 
-            line = ",".join([str(result[x]) for x in attributes])
+        line = ",".join([str(result[x]) for x in attributes])
 
-            print >> stream, "%s,%s" % (line, expected_class)
-            if _timer: _timer.increment()
+        print >> stream, "%s,%s" % (line, expected_class)
+        if _timer: _timer.increment()
 
 def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     if variant is None:
