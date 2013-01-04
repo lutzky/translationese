@@ -16,6 +16,7 @@ class TestAnalyze(unittest.TestCase):
         tests_dir = os.path.join(os.path.dirname(__file__), "test_data")
         self.o_dir = os.path.join(tests_dir, "o")
         self.t_dir = os.path.join(tests_dir, "t")
+        os.system("find %s -name '*.analysis' -delete" % tests_dir)
 
     def assertResultForModule(self, module, expected, variant=None):
         s = StringIO.StringIO()
@@ -57,7 +58,7 @@ lexical_variety_result = """\
 @attribute class { T, O }
 
 @data
-5.23501721729,O
+4.82532632325,O
 4.96252485208,O
 6.0,T
 5.16811869688,T
@@ -109,7 +110,7 @@ contractions_result = """\
 @attribute class { T, O }
 
 @data
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,O
+0,0.25,0,0,0,0,0,0,0,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,O
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,O
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,T
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,T
