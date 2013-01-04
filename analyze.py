@@ -20,16 +20,18 @@ class Timer:
 
     def start(self):
         self.started_at = time.time()
+        self.prevtime = self.started_at
         self.count = 0
 
     def increment(self):
         self.count += 1
-        if self.count % self.report_every == 0:
+        if time.time() - self.prevtime > 1:
             elapsed = time.time() - self.started_at
             average_ms = 1000.0 * (elapsed / self.count)
             self.stream.write(\
                     "\r[%5d] %d seconds elapsed, (%.2f ms each)" \
                     % (self.count, elapsed, average_ms))
+            self.prevtime = time.time()
 
     def finish(self):
         self.stream.write("\n")
