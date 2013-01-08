@@ -10,32 +10,58 @@ import nltk
 COHESIVE_MARKERS = ["as for",
 "as to",
 "because",
+"besides",
+"but",
+"consequently",
 "despite",
-"even if"]
+"even if",
+"even though",
+"except",
+"further",
+"furthermore",
+"hence",
+"however",
+"in addition",
+"in conclusion",
+"in other words",
+"in spite",
+"instead",
+"is to say",
+"maybe",
+"moreover",
+"nevertheless",
+"on account of",
+"on the contrary",
+"on the other hand",
+"otherwise",
+"referring to",
+"since",
+"so",
+"the former",
+"the latter",
+"therefore",
+"this implies",
+"though",
+"thus",
+"with reference to",
+"with regard to",
+"yet",
+"concerning"]
 
 def quantify(analysis):
-    histogram = analysis.histogram_normalized()
-    bigram = analysis.bigrams()
-    pairs = []
+    result = {}
+    for mrk in COHESIVE_MARKERS:
+        result[mrk] = result.get(mrk, 0)
     
-    for word in analysis.tokens():
-        
+    tokenized_markers = [(mrk,nltk.word_tokenize(mrk)) for mrk in COHESIVE_MARKERS]
+    text = analysis.tokens()
     
-    
-    
-    
-    for marker in COHESIVE_MARKERS:
-        tokenized_marker = nltk.word_tokenize(marker)
-        marker_len = len(tokenized_marker)
-        
-        if (marker_len == 1):
-            pairs += {(marker, histogram.get(marker, 0.0))}
-            
-        elif (marker_len == 2):
-            new_marker = (tokenized_marker[0], tokenized_marker[1])
-            pairs += {(marker, bigram.get(new_marker, 0.0))}
-            
-    print pairs
+    for (i,word) in enumerate(text):
+        for (mrk1,mrk2) in tokenized_markers:
+            if (mrk2 == text[i:i+len(mrk2)]):
+                result[mrk1] = result.get(mrk1, 0) + 1
+
+    pairs = [ (mrk, float(result[mrk]) / len(text)) for mrk in COHESIVE_MARKERS]
     return dict(pairs)
 
 attributes = COHESIVE_MARKERS
