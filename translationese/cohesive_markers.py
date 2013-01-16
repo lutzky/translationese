@@ -50,18 +50,19 @@ COHESIVE_MARKERS = ["as for",
 
 def quantify(analysis):
     result = {}
-    for mrk in COHESIVE_MARKERS:
-        result[mrk] = result.get(mrk, 0)
+    for marker in COHESIVE_MARKERS:
+        result[marker] = result.get(marker, 0)
     
-    tokenized_markers = [(mrk,nltk.word_tokenize(mrk)) for mrk in COHESIVE_MARKERS]
+    tokenized_markers = [(marker,nltk.word_tokenize(marker)) for marker in COHESIVE_MARKERS]
     text = analysis.tokens()
     
     for (i,word) in enumerate(text):
-        for (mrk1,mrk2) in tokenized_markers:
-            if (mrk2 == text[i:i+len(mrk2)]):
-                result[mrk1] = result.get(mrk1, 0) + 1
+        for (marker,tokenized) in tokenized_markers:
+            if (tokenized == text[i:i+len(tokenized)]):
+                result[marker] = result.get(marker, 0) + 1
 
-    pairs = [ (mrk, float(result[mrk]) / len(text)) for mrk in COHESIVE_MARKERS]
+    pairs = [ (marker, float(result[marker]) / len(text)) for marker in COHESIVE_MARKERS]
+    
     return dict(pairs)
 
 attributes = COHESIVE_MARKERS
