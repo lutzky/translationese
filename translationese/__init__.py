@@ -65,13 +65,15 @@ class Analysis(object):
     @memoize.memoize
     def pos_tags_by_sentence(self):
         """Return part-of-speech tags, split by sentence.
+        Case-sensitive, as part-of-speech tagging is case-sensitive by nature
+        (nouns vs. proper nouns).
 
         >>> Analysis("I am fine. How are you?").pos_tags_by_sentence()
         ... # doctest: +NORMALIZE_WHITESPACE
-        [[('i', 'PRP'), ('am', 'VBP'), ('fine', 'NN'), ('.', '.')],
-        [('how', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]]
+        [[('I', 'PRP'), ('am', 'VBP'), ('fine', 'NN'), ('.', '.')],
+        [('How', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]]
         """
-        return nltk.batch_pos_tag(self.tokenized_sentences())
+        return nltk.batch_pos_tag(self.case_tokenized_sentences())
 
     @memoize.memoize
     def pos_tags(self):
@@ -79,15 +81,29 @@ class Analysis(object):
 
         >>> Analysis("I am fine. How are you?").pos_tags()
         ... # doctest: +NORMALIZE_WHITESPACE
-        [('i', 'PRP'), ('am', 'VBP'), ('fine', 'NN'), ('.', '.'),
-        ('how', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]
+        [('I', 'PRP'), ('am', 'VBP'), ('fine', 'NN'), ('.', '.'),
+        ('How', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]
         """
         return flatten_list(self.pos_tags_by_sentence())
 
     @memoize.memoize
     def tokenized_sentences(self):
-        sentences = [ s.lower() for s in self.sentences() ]
-        return [ nltk.word_tokenize(s) for s in sentences ]
+        """List of sentences, tokenized as lowercase.
+
+        >>> Analysis("Hello. How are you?").tokenized_sentences()
+        [['hello', '.'], ['how', 'are', 'you', '?']]
+        """
+        lowercase_sentences = [ s.lower() for s in self.sentences() ]
+        return [ nltk.word_tokenize(s) for s in lowercase_sentences ]
+
+    @memoize.memoize
+    def case_tokenized_sentences(self):
+        """List of sentences, tokenized, case-sensitive.
+
+        >>> Analysis("Hello. How are you?").case_tokenized_sentences()
+        [['Hello', '.'], ['How', 'are', 'you', '?']]
+        """
+        return [ nltk.word_tokenize(s) for s in self.sentences() ]
 
     @memoize.memoize
     def tokens(self):
