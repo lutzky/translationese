@@ -7,8 +7,6 @@ Origin: On the Features of Translationese, VV, NO & SW
 
 import nltk
 
-attributes = [ "mean_word_length" ]
-
 def is_contraction_suffix(token):
     return "'" in token and token.replace("'", "").isalpha()
 

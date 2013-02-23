@@ -6,17 +6,14 @@ Origin: On the Features of Translationese, VV, NO & SW
 """
 import translationese
 
-main_attributes = [ '?', '!', ':', ';', '-', '(', ')', '[', ']',
-                    "'", '"', '/', ',', '.' ]
-
-# Attributes are identical for all three variants.
-variant_attributes = [ main_attributes ] * 3
+punctuation_marks = [ '?', '!', ':', ';', '-', '(', ')', '[', ']',
+                      "'", '"', '/', ',', '.' ]
 
 def count_punctuation_marks(analysis):
-    histogram = dict([ (x, 0) for x in main_attributes ])
+    histogram = dict([ (x, 0) for x in punctuation_marks ])
     count = 0
     for char in analysis.fulltext:
-        if char in main_attributes:
+        if char in punctuation_marks:
             histogram[char] += 1
             count += 1
     return count, histogram
@@ -36,7 +33,7 @@ def quantify_variant(analysis, variant):
                 float(count) / 4.0,
                 ]
 
-    for char in main_attributes:
+    for char in punctuation_marks:
         histogram[char] /= divideby[variant]
 
     return histogram

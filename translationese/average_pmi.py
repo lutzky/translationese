@@ -7,8 +7,6 @@ Origin: On the Features of Translationese, VV, NO & SW
 
 import math
 
-attributes = [ "average_pmi" ]
-
 def quantify(analysis):
     pmi = analysis.pmi()
     return { "average_pmi": sum(pmi.values()) / len(pmi) }

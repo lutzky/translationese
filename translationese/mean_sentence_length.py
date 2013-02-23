@@ -7,8 +7,6 @@ Origin: On the Features of Translationese, VV, NO & SW
 
 import nltk
 
-attributes = [ "mean_sentence_length" ]
-
 def quantify(analysis):
     result = len(analysis.tokens()) / float(len(analysis.sentences()))
     return { "mean_sentence_length": result }

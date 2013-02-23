@@ -51,8 +51,6 @@ CONTRACTIONS = {
  "didn't": [ "did not" ],
 }
 
-attributes = sorted(CONTRACTIONS.keys())
-
 def quantify(analysis):
     histogram = analysis.bigrams()
 
@@ -72,5 +70,5 @@ def quantify(analysis):
 
         return contracted_count / float(uncontracted_count)
 
-    pairs = [ (x, contraction_ratio(x)) for x in attributes ]
+    pairs = [ (x, contraction_ratio(x)) for x in CONTRACTIONS.keys() ]
     return dict(pairs)

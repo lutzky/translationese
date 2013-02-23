@@ -11,12 +11,6 @@ __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
 
 
-variant_attributes = [
-    [ "TTR1" ],
-    [ "TTR2" ],
-    [ "TTR3" ],
-]
-
 class LexicalVarietyQuantifier:
     def unique_tokens(self):
         """Returns tokens occurring only once in the text."""

@@ -64,5 +64,3 @@ def quantify(analysis):
     pairs = [ (marker, float(result[marker]) / len(text)) for marker in COHESIVE_MARKERS]
     
     return dict(pairs)
-
-attributes = COHESIVE_MARKERS

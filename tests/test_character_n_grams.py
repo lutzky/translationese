@@ -100,14 +100,8 @@ class TestCharacterNGrams(unittest.TestCase):
         self.assertSparseDictEqual(self.expected, self.result)
 
     def assertSparseDictEqual(self, expected, result):
-        no_zeroes_result = {}
-        for key, val in result.items():
-            if val:
-                no_zeroes_result[key] = val
+        expected_with_zeroes = expected.copy()
+        for key in result.keys():
+            expected_with_zeroes.setdefault(key, 0.0)
 
-        self.assertDictEqual(expected, no_zeroes_result)
-
-        for key in character_n_grams.variant_attributes[self.variant]:
-            self.expected.setdefault(key, 0.0)
-
-        self.assertDictEqual(self.result, self.expected)
+        self.assertDictEqual(result, expected_with_zeroes)

@@ -8,8 +8,6 @@ Origin: On the Features of Translationese, VV, NO & SW
 import math
 import translationese
 
-attributes = [ "threshold_pmi" ]
-
 def quantify(analysis):
     pmi = analysis.pmi()
     positive_pmi = [ x for x in pmi.values() if x > 0 ]

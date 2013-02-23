@@ -4,7 +4,6 @@ Implementation of Ratio to passive verbs to all verbs hypothesis.
 Origin: On the Features of Translationese, VV, NO & SW
         4.5 Miscellaneous, Ratio of passive forms to all verbs
 """
-attributes = [ "ratio_to_passive_verbs" ]
 
 def quantify(analysis):
     def is_verb(pos_tag):

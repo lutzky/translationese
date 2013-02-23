@@ -476,5 +476,3 @@ def quantify(analysis):
     freq = analysis.histogram_normalized()
     pairs = [ (word, freq.get(word, 0.0)) for word in FUNCTION_WORDS ]
     return dict(pairs)
-
-attributes = FUNCTION_WORDS

@@ -37,5 +37,3 @@ def quantify(analysis):
     freq = analysis.histogram_normalized()
     pairs = [ (word, freq.get(word, 0.0)) for word in PRONOUNS ]
     return dict(pairs)
-
-attributes = PRONOUNS

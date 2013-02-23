@@ -11,8 +11,6 @@ __email__ = "gal.star3051@gmail.com"
 
 import nltk
 
-attributes = [ "mean_multiple_naming" ]
-
 def is_proper_noun(pos):
     return (pos == "NNP")
 

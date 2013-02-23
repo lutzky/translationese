@@ -39,8 +39,6 @@ class CharacterNGramAttributeVariantGenerator:
         result = [ "".join(x) for x in result ]
         return result
 
-variant_attributes = CharacterNGramAttributeVariantGenerator()
-
 class CharacterNGramQuantifier:
     def __init__(self, variant, attributes = None):
         if attributes == None:

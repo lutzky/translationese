@@ -8,8 +8,6 @@ Origin: On the Features of Translationese, VV, NO & SW
 __author__ = "Gal Star"
 __email__ = "gal.star3051@gmail.com"
 
-attributes = [ "lexical_density" ]
-
 def quantify(analysis):
     all_tags = analysis.tokens()
     
