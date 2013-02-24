@@ -13,7 +13,7 @@ class TestExplicitation(unittest.TestCase):
         a = translationese.Analysis("She and he are better than John, Marie "
                                     "and Jim.")
         result = explicit_naming.quantify(a)
-        self.assertAlmostEqual(2.0 / 3.0, result["explicit_naming"])
+        self.assertAlmostEqual(3.0 * (2.0 / 3.0), result["explicit_naming"])
 
 if __name__ == "__main__":
     unittest.main()

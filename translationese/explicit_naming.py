@@ -13,4 +13,4 @@ def quantify(analysis):
     print analysis.pos_tags()
     pronouns = sum(1 for x in analysis.tokens() if x in PRONOUNS_LIST)
 
-    return { "explicit_naming": float(pronouns) / proper_nouns }
+    return { "explicit_naming": 3.0 * (float(pronouns) / proper_nouns) }
