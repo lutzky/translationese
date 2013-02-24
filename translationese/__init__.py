@@ -15,6 +15,9 @@ def flatten_list(l):
     return [ item for sublist in l for item in sublist ]
 
 class Analysis(object):
+    """Module to represent and cache an NLTK analysis of a given text. Can
+    be initialized either from a file (stream) or fulltext as a parameter."""
+
     def __init__(self, fulltext = None, stream = None, filename = None):
         self.filename = None
         if fulltext:
