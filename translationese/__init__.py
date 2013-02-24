@@ -1,7 +1,10 @@
 import memoize
-import nltk
-from nltk.tag import pos_tag
 import math
+import os
+
+if os.environ.get("READTHEDOCS", None) != 'True':
+    import nltk
+    from nltk.tag import pos_tag
 
 expected_chunk_size = 2000.0
 
