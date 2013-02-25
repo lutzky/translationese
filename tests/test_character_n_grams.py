@@ -9,8 +9,10 @@ from translationese import Analysis
 from translationese import character_n_grams
 from translationese.character_n_grams import \
         CharacterNGramAttributeVariantGenerator
+from tests.util import SparseDictEqualMixin
 
-class TestCharacterNGramAttributeVariantGenerator(unittest.TestCase):
+class TestCharacterNGramAttributeVariantGenerator(SparseDictEqualMixin,
+                                                  unittest.TestCase):
     def setUp(self):
         self.miniAlphabet = ["a", "b", "c"]
 
@@ -59,7 +61,7 @@ class TestCharacterNGramAttributeVariantGenerator(unittest.TestCase):
 
         self.assertEqual(actual, expected)
 
-class TestCharacterNGrams(unittest.TestCase):
+class TestCharacterNGrams(SparseDictEqualMixin, unittest.TestCase):
     def setUp(self):
         self.analysis = Analysis("Hello, world!")
         self.quantify = character_n_grams.quantify_variant
@@ -98,10 +100,3 @@ class TestCharacterNGrams(unittest.TestCase):
                 }
 
         self.assertSparseDictEqual(self.expected, self.result)
-
-    def assertSparseDictEqual(self, expected, result):
-        expected_with_zeroes = expected.copy()
-        for key in result.keys():
-            expected_with_zeroes.setdefault(key, 0.0)
-
-        self.assertDictEqual(result, expected_with_zeroes)
