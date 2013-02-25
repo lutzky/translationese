@@ -11,8 +11,9 @@ class SparseDictEqualMixin(unittest.TestCase):
     ...         self.assertSparseDictEqual(expected, result)
     """
     def assertSparseDictEqual(self, expected, result):
-        expected_with_zeroes = expected.copy()
-        for key in result.keys():
-            expected_with_zeroes.setdefault(key, 0.0)
+        result_without_zeroes = result.copy()
 
-        self.assertDictEqual(result, expected_with_zeroes)
+        for key, value in result_without_zeroes.items():
+            if not value: del result_without_zeroes[key]
+
+        self.assertDictEqual(result_without_zeroes, expected)
