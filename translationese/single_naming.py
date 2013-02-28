@@ -5,7 +5,7 @@ Origin: On the Features of Translationese, VV, NO & SW
         4.2 Explicitation, Single Naming.
 """
 
-from translationese import is_proper_noun
+from translationese.utils import is_proper_noun
 
 def quantify(analysis):
     edge_marker = [('', '')]

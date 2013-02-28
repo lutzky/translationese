@@ -1,6 +1,7 @@
 import memoize
 import math
 import os
+from translationese.utils import flatten_list
 
 if os.environ.get("READTHEDOCS", None) != 'True':
     import nltk
@@ -8,37 +9,11 @@ if os.environ.get("READTHEDOCS", None) != 'True':
 
 expected_chunk_size = 2000.0
 
-def flatten_list(l):
-    """Returns a flat list given a list of lists.
-
-    >>> flatten_list([[1,2],[3,4],[5,6]])
-    [1, 2, 3, 4, 5, 6]
-    """
-
-    return [ item for sublist in l for item in sublist ]
-
-def is_proper_noun(token_tag_pair):
-    """Given a pair of a token and a tag, returns True if it represents a
-    proper noun.
-
-    >>> nltk.pos_tag(nltk.word_tokenize("Impressive! John defeated Jim!"))
-    ... # doctest: +NORMALIZE_WHITESPACE
-    [('Impressive', 'JJ'), ('!', 'NN'), ('John', 'NNP'), ('defeated', 'VBD'),
-    ('Jim', 'NNP'), ('!', '.')]
-    >>> is_proper_noun(('Impressive', 'JJ'))
-    False
-    >>> is_proper_noun(('John', 'NNP'))
-    True
-    """
-
-    token, tag = token_tag_pair
-    return tag.startswith("NNP")
-
 class Analysis(object):
     """Module to represent and cache an NLTK analysis of a given text. Can
     be initialized either from a file (stream) or fulltext as a parameter."""
 
-    def __init__(self, fulltext = None, stream = None, filename = None):
+    def __init__(self, fulltext=None, stream=None, filename=None):
         self.filename = None
         if fulltext:
             self.fulltext = fulltext
@@ -165,8 +140,8 @@ class Analysis(object):
 
     def pmi(self):
         num_bigrams = float(len(self.tokens()) - 1)
-        bigrams_normalized = dict([ (x, y/num_bigrams)
-                                    for (x,y) in self.bigrams().items() ])
+        bigrams_normalized = dict([ (x, y / num_bigrams)
+                                    for (x, y) in self.bigrams().items() ])
         freq = self.histogram_normalized()
 
         bigram_pmi = lambda bigram, bigram_freq: \

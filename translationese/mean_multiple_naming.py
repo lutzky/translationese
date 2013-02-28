@@ -4,10 +4,9 @@ Implementation of Mean multiple naming hypothesis.
 Origin: On the Features of Translationese, VV, NO & SW
         4.2 Expplicitation, Mean multiple naming
 """
-from nltk.tag import pos_tag
 
 import nltk
-from translationese import is_proper_noun
+from translationese.utils import is_proper_noun
 
 def quantify(analysis):
     num_proper_noun_runs = 0

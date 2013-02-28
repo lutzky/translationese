@@ -5,8 +5,8 @@ Origin: On the Features of Translationese, VV, NO & SW
         4.2 Explicitation, Explicit Naming.
 """
 
-from translationese import is_proper_noun
 from pronouns import PRONOUNS as PRONOUNS_LIST
+from translationese.utils import is_proper_noun
 
 def quantify(analysis):
     proper_nouns = sum(1 for x in analysis.pos_tags() if is_proper_noun(x))
