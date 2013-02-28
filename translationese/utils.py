@@ -18,20 +18,8 @@ def set_cartesian_power(s, n):
     [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)]
     """
 
-    sets_to_multiply = [s]*n
+    sets_to_multiply = [s] * n
     return itertools.product(*sets_to_multiply)
-
-def ngrams(l, n):
-    """Returns the set of ngrams from l.
-
-    >>> list(ngrams([1,2,3,4,5], 3))
-    [(1, 2, 3), (2, 3, 4), (3, 4, 5)]
-    """
-
-    l = list(l)
-
-    for i in range(len(l) - n + 1):
-        yield tuple(l[i:i+n])
 
 def output_filter_ngram(ngram):
     """Returns the ngram in a form suitable for ARFF output.
