@@ -21,7 +21,7 @@ class Timer:
     which occurs, and every ``report_every`` seconds the count and
     average time will be displayed."""
 
-    def __init__(self, report_every=10, stream=sys.stderr):
+    def __init__(self, report_every=1, stream=sys.stderr):
         self.report_every = report_every
         self.stream = stream
 
@@ -35,20 +35,27 @@ class Timer:
         self.prevtime = self.started_at
         self.count = 0
 
-    def increment(self):
-        """Report an event as having occured."""
-        self.count += 1
-        if time.time() - self.prevtime > 1:
-            elapsed = time.time() - self.started_at
-            average_ms = 1000.0 * (elapsed / self.count)
+    def output(self):
+        elapsed = time.time() - self.started_at
+        average_ms = 1000.0 * (elapsed / self.count)
+        if self.stream:
             self.stream.write(\
                     "\r[%5d] %d seconds elapsed, (%.2f ms each)" \
                     % (self.count, elapsed, average_ms))
+            self.stream.flush()
+
+    def increment(self):
+        """Report an event as having occured."""
+        self.count += 1
+        if time.time() - self.prevtime > self.report_every:
+            self.output()
             self.prevtime = time.time()
 
     def stop(self):
         """Stop the timer, properly formatting end-of-line."""
-        self.stream.write("\n")
+        self.output()
+        if self.stream:
+            self.stream.write("\n")
 
 def analyze_file(filename, analyzer_module, variant=None):
     with translationese.Analysis(filename=filename) as analysis:
@@ -58,7 +65,7 @@ def analyze_file(filename, analyzer_module, variant=None):
             return analyzer_module.quantify(analysis)
 
 def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
-                      variant=None, timer=None):
+                      variant, timer):
     results = []
 
     for filename in sorted(os.listdir(dir_to_analyze)):
@@ -68,7 +75,7 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
         filename = os.path.join(dir_to_analyze, filename)
         try:
             result = analyze_file(filename, analyzer_module, variant)
-            if timer: timer.increment()
+            timer.increment()
         except:
             logging.error("Error analyzing file %s", filename)
             raise
@@ -77,11 +84,12 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
 
     return results
 
-def print_results(results, stream):
+def print_results(results, stream, timer):
     attributes = set()
 
     print >> stream, "@relation translationese"
 
+    logging.info("Merging result keys")
     for result, _ in results:
         attributes.update(result.keys())
 
@@ -96,12 +104,18 @@ def print_results(results, stream):
     print >> stream
     print >> stream, "@data"
 
+    logging.info("Printing results")
+
+    timer.start()
     for result, expected_class in results:
         line = ",".join([str(result.get(x, 0)) for x in attributes])
 
         print >> stream, "%s,%s" % (line, expected_class)
+        timer.increment()
+    timer.stop()
 
-def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
+def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None,
+         timer_stream=sys.stdout):
     """Internal, testable main() function for analysis."""
     if variant is None:
         if not hasattr(analyzer_module, "quantify"):
@@ -111,7 +125,8 @@ def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
         raise translationese.NoVariants("%s does not support variants" % \
                                         analyzer_module.__name__)
 
-    timer = Timer()
+    timer = Timer(stream=timer_stream)
+
     results = []
 
     logging.info("Analyzing 'O' directory %s", o_dir)
@@ -124,10 +139,7 @@ def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
     results += analyze_directory(t_dir, "T", analyzer_module, variant, timer)
     timer.stop()
 
-    logging.info("Writing results")
-    timer.start()
-    print_results(results, stream)
-    timer.stop()
+    print_results(results, stream, timer)
 
 def import_translationese_module(module_name):
     return __import__('translationese.%s' % module_name,
