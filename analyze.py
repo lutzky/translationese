@@ -86,7 +86,7 @@ def print_results(results, stream):
     print >> stream, "@data"
 
     for result, expected_class in results:
-        line = ",".join([str(result[x]) for x in attributes])
+        line = ",".join([str(result.get(x, 0)) for x in attributes])
 
         print >> stream, "%s,%s" % (line, expected_class)
         if _timer: _timer.increment()
