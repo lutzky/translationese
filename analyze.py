@@ -126,22 +126,28 @@ def get_output_stream(auto_outfile, variant, module_name):
 
     return outfile
 
-if __name__ == '__main__':
+def cmdline_main():
+    """External main() function for calling from commandline."""
     from optparse import OptionParser
-    _timer = Timer()
 
-    usage="%%prog [options] MODULE\n\n" \
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)-15s [%(levelname)-6s] %(message)s')
+
+    usage = "%%prog [options] MODULE\n\n" \
             "Available modules:\n%s" % \
             "\n".join([ "  %s" % x for x in available_modules() ])
 
     parser = OptionParser(usage=usage)
     parser.add_option("-v", "--variant", dest="variant", default=None,
                       type="int", help="Variant for analysis module")
-    parser.add_option("-t", dest="t_dir", default='./o/',
-                      help="Directory of T (translated) texts\n[default: %default]")
-    parser.add_option("-o", dest="o_dir", default='./t/',
-                      help="Directory of O (original) texts [default: %default]")
-    parser.add_option("--auto-outfile", dest="auto_outfile", action="store_true",
+    parser.add_option("-t", dest="t_dir", default='./t/',
+                      help="Directory of T (translated) texts\n" \
+                           "[default: %default]")
+    parser.add_option("-o", dest="o_dir", default='./o/',
+                      help="Directory of O (original) texts " \
+                           "[default: %default]")
+    parser.add_option("--auto-outfile", dest="auto_outfile",
+                      action="store_true",
                       help="Write output to MODULE[_VARIANT].arff")
 
     options, args = parser.parse_args()
