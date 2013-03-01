@@ -5,57 +5,24 @@ Origin: On the Features of Translationese, VV, NO & SW
         4.4 Interference, Character n-Grams
 """
 
-import string
-from itertools import product
+from nltk.util import ingrams
 
 __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
 
 
 WORD_START = "<"
-WORD_END   = ">"
-
-class CharacterNGramAttributeVariantGenerator:
-    def __init__(self, alphabet = string.lowercase):
-        self.alphabet = alphabet
-
-    def __getitem__(self, n):
-        if n < 0:
-            raise IndexError("%d is negative" % n)
-
-        # Variant 0 should produce unigrams, 1 bigrams, etc.
-        n += 1
-
-        result = []
-
-        if n > 1:
-            alphabet_factors  = [self.alphabet] * (n-1)
-            result += product(*([WORD_START] + alphabet_factors))
-            result += product(*(alphabet_factors + [WORD_END]))
-
-        alphabets_to_multiply = [self.alphabet] * n
-        result += product(*alphabets_to_multiply)
-
-        result = [ "".join(x) for x in result ]
-        return result
+WORD_END = ">"
 
 class CharacterNGramQuantifier:
-    def __init__(self, variant, attributes = None):
-        if attributes == None:
-            generator = CharacterNGramAttributeVariantGenerator()
-            attributes = generator[variant]
-
-        self.attributes = attributes
-
-        # k is n - 1. This is useful in all calculations from here.
+    def __init__(self, variant, attributes=None):
         self.k = variant
 
     def __initialize_histogram(self):
-        self.histogram = dict([ (x,0) for x in self.attributes ])
+        self.histogram = {}
 
     def __histogram_increment(self, key):
-        if key in self.histogram:
-            self.histogram[key] += 1
+        self.histogram[key] = self.histogram.get(key, 0) + 1
 
     def __add_token_edges(self, token):
         if len(token) < self.k:
@@ -67,9 +34,8 @@ class CharacterNGramQuantifier:
             self.__histogram_increment(key)
 
     def __add_token_ngrams(self, token):
-        for i in range(self.k, len(token)):
-            current_ngram = token[i-self.k : i + 1]
-            self.__histogram_increment(current_ngram)
+        for current_ngram in ingrams(token, self.k + 1):
+            self.__histogram_increment(''.join(current_ngram))
 
     def __normalize_histogram(self, analysis):
         factor = 1.0 / len(analysis.fulltext)
@@ -80,8 +46,10 @@ class CharacterNGramQuantifier:
         self.__initialize_histogram()
 
         for token in analysis.tokens():
+            if not token.isalpha(): continue
             self.__add_token_ngrams(token)
-            self.__add_token_edges(token)
+            if self.k > 0:
+                self.__add_token_edges(token)
 
         self.__normalize_histogram(analysis)
         return self.histogram

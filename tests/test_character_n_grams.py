@@ -7,59 +7,7 @@ import unittest
 
 from translationese import Analysis
 from translationese import character_n_grams
-from translationese.character_n_grams import \
-        CharacterNGramAttributeVariantGenerator
 from tests.util import SparseDictEqualMixin
-
-class TestCharacterNGramAttributeVariantGenerator(SparseDictEqualMixin,
-                                                  unittest.TestCase):
-    def setUp(self):
-        self.miniAlphabet = ["a", "b", "c"]
-
-    def testUnigrams(self):
-        expected = self.miniAlphabet
-        generator = CharacterNGramAttributeVariantGenerator(self.miniAlphabet)
-        actual = generator[0]
-
-        self.assertEqual(actual, expected)
-
-    def testBigrams(self):
-        generator = CharacterNGramAttributeVariantGenerator(self.miniAlphabet)
-        actual = generator[1]
-
-        expected = [
-                "<a", "<b", "<c",
-                "a>", "b>", "c>",
-                "aa", "ab", "ac",
-                "ba", "bb", "bc",
-                "ca", "cb", "cc",
-                ]
-
-        self.assertEqual(actual, expected)
-
-    def testTrigrams(self):
-        generator = CharacterNGramAttributeVariantGenerator(self.miniAlphabet)
-        actual = generator[2]
-
-        expected = [
-                "<aa", "<ab", "<ac",
-                "<ba", "<bb", "<bc",
-                "<ca", "<cb", "<cc",
-                "aa>", "ab>", "ac>",
-                "ba>", "bb>", "bc>",
-                "ca>", "cb>", "cc>",
-                "aaa", "aab", "aac",
-                "aba", "abb", "abc",
-                "aca", "acb", "acc",
-                "baa", "bab", "bac",
-                "bba", "bbb", "bbc",
-                "bca", "bcb", "bcc",
-                "caa", "cab", "cac",
-                "cba", "cbb", "cbc",
-                "cca", "ccb", "ccc",
-                ]
-
-        self.assertEqual(actual, expected)
 
 class TestCharacterNGrams(SparseDictEqualMixin, unittest.TestCase):
     def setUp(self):
