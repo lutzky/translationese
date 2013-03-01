@@ -6,18 +6,14 @@ Created on Dec 5, 2012
 import unittest
 
 from translationese import Analysis
-from translationese import character_n_grams
+from translationese.character_n_grams import quantify_variant
 from tests.util import SparseDictEqualMixin
 
 class TestCharacterNGrams(SparseDictEqualMixin, unittest.TestCase):
-    def setUp(self):
-        self.analysis = Analysis("Hello, a world!")
-        self.quantify = character_n_grams.quantify_variant
-
     def testUnigrams(self):
-        self.variant = 0
-        self.result = self.quantify(self.analysis, self.variant)
-        self.expected = {
+        analysis = Analysis("Hello, a world!")
+        result = quantify_variant(analysis, 0)
+        expected = {
                 "a": 1 / 15.0,
                 "h": 1 / 15.0,
                 "e": 1 / 15.0,
@@ -28,12 +24,12 @@ class TestCharacterNGrams(SparseDictEqualMixin, unittest.TestCase):
                 "d": 1 / 15.0,
                 }
 
-        self.assertSparseDictEqual(self.expected, self.result)
+        self.assertSparseDictEqual(expected, result)
 
     def testBigrams(self):
-        self.variant = 1
-        self.result = self.quantify(self.analysis, self.variant)
-        self.expected = {
+        analysis = Analysis("Hello, a world!")
+        result = quantify_variant(analysis, 1)
+        expected = {
                 "<h": 1 / 15.0,
                 "he": 1 / 15.0,
                 "el": 1 / 15.0,
@@ -50,4 +46,4 @@ class TestCharacterNGrams(SparseDictEqualMixin, unittest.TestCase):
                 "d>": 1 / 15.0,
                 }
 
-        self.assertSparseDictEqual(self.expected, self.result)
+        self.assertSparseDictEqual(expected, result)

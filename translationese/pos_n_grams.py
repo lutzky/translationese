@@ -11,7 +11,7 @@ def quantify_variant(analysis, variant):
 
     d = {}
 
-    all_pos_tags = [ pos for (token, pos) in analysis.pos_tags() ]
+    all_pos_tags = [ pos for (_, pos) in analysis.pos_tags() ]
 
     for ngram in ingrams(all_pos_tags, n):
         d[ngram] = d.get(ngram, 0) + 1

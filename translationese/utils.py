@@ -32,5 +32,5 @@ def is_proper_noun(token_tag_pair):
     True
     """
 
-    token, tag = token_tag_pair
+    tag = token_tag_pair[1]
     return tag.startswith("NNP")

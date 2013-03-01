@@ -30,8 +30,8 @@ class Analysis(object):
         self.loadcache()
         return self
 
-    def __exit__(self, type, value, tb):
-        if tb is not None:
+    def __exit__(self, exc_type, exc_value, traceback):
+        if traceback is not None:
             # An exception was thrown, do not save pickle
             return False
         self.savecache()

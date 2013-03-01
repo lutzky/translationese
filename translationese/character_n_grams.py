@@ -15,10 +15,8 @@ WORD_START = "<"
 WORD_END = ">"
 
 class CharacterNGramQuantifier:
-    def __init__(self, variant, attributes=None):
+    def __init__(self, variant):
         self.k = variant
-
-    def __initialize_histogram(self):
         self.histogram = {}
 
     def __histogram_increment(self, key):
@@ -43,8 +41,6 @@ class CharacterNGramQuantifier:
             self.histogram[key] *= factor
 
     def quantify(self, analysis):
-        self.__initialize_histogram()
-
         for token in analysis.tokens():
             if not token.isalpha(): continue
             self.__add_token_ngrams(token)

@@ -23,6 +23,8 @@ import logging
 
 logger = logging.getLogger("memoize")
 
+# pylint: disable=W0212
+
 def memoize(func):
     @wraps(func)
     def wrapper(self):
@@ -38,7 +40,7 @@ def load(obj, filename):
         if os.path.exists(filename):
             with open(filename, "r") as f:
                 obj._memoize_cache = pickle.load(f)
-    except Exception, e:
+    except Exception:
         logging.warn("Invalid pickle file %s", filename)
 
 def dump(obj, filename):
