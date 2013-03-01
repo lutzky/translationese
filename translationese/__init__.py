@@ -1,7 +1,7 @@
 import memoize
 import math
 import os
-from translationese.utils import flatten_list
+from translationese.utils import flatten_list, sparse_dict_increment
 
 if os.environ.get("READTHEDOCS", None) != 'True':
     import nltk
@@ -118,7 +118,7 @@ class Analysis(object):
         """Return a dictionary { "TOKEN": NUMBER_OF_OCCURENCES, ... }"""
         result = {}
         for t in self.tokens():
-            result[t] = result.get(t, 0) + 1
+            sparse_dict_increment(result, t)
         return result
 
     @memoize.memoize
@@ -135,7 +135,7 @@ class Analysis(object):
         result = {}
         for i in range(len(self.tokens()) - 1):
             bigram = (self.tokens()[i], self.tokens()[i + 1])
-            result[bigram] = result.get(bigram, 0) + 1
+            sparse_dict_increment(result, bigram)
         return result
 
     def pmi(self):

@@ -6,6 +6,7 @@ Origin: On the Features of Translationese, VV, NO & SW
 """
 
 from nltk.util import ingrams
+from translationese.utils import sparse_dict_increment
 
 __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
@@ -19,9 +20,6 @@ class CharacterNGramQuantifier:
         self.k = variant
         self.histogram = {}
 
-    def __histogram_increment(self, key):
-        self.histogram[key] = self.histogram.get(key, 0) + 1
-
     def __add_token_edges(self, token):
         if len(token) < self.k:
             return
@@ -29,11 +27,11 @@ class CharacterNGramQuantifier:
         word_end = token[-self.k:] + WORD_END
 
         for key in word_start, word_end:
-            self.__histogram_increment(key)
+            sparse_dict_increment(self.histogram, key)
 
     def __add_token_ngrams(self, token):
         for current_ngram in ingrams(token, self.k + 1):
-            self.__histogram_increment(''.join(current_ngram))
+            sparse_dict_increment(self.histogram, ''.join(current_ngram))
 
     def __normalize_histogram(self, analysis):
         factor = 1.0 / len(analysis.fulltext)

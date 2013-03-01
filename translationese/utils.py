@@ -34,3 +34,14 @@ def is_proper_noun(token_tag_pair):
 
     tag = token_tag_pair[1]
     return tag.startswith("NNP")
+
+def sparse_dict_increment(d, k):
+    """Increment key ``k`` in dictionary ``d``, assuming 0 if missing.
+
+    >>> d = {}
+    >>> sparse_dict_increment(d, "key")
+    >>> sparse_dict_increment(d, "key")
+    >>> d
+    {'key': 2}
+    """
+    d[k] = d.get(k, 0) + 1
