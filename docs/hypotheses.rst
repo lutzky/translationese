@@ -217,10 +217,29 @@ Associated with the output of non-native speakers producing utterances in their
 second language. Operates on different levels from transcribing source language
 words, through using loan translations, to exerting structural influence.
 
-  * POS n-grams         - actual number of each POS n-grams in a chunck.
-  * Character n-grams   
-  * Contextual function words
-  * Positional tokens frequency - frequency of tokens in the first, second, antepenultimate, penultimate and last positions.
+POS `n`-grams
+^^^^^^^^^^^^^
+
+.. automodule:: translationese.pos_n_grams
+   :members:
+
+Character `n`-grams
+^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.character_n_grams
+   :members:
+
+Contextual function words
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.contextual_function_words
+   :members:
+
+Positional token frequency
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.positional_token_frequency
+   :members:
 
 Miscellaneous
 -------------
@@ -228,8 +247,26 @@ Miscellaneous
 A number of features that cannot be associated with any above hypothesis
 category.
 
-  * Function words         - frequency of occurence of each function words from pre-defined list.
-  * Pronoun                - frequency of occurence of each pronoun from pre-defined list.
-  * Punctuation            - frequency of each puncuation mark in the chunck.
-  * Ratio of passive verbs - original texts tend to use passive form of verbs more than translated texts. 
+Function words
+^^^^^^^^^^^^^^
 
+.. automodule:: translationese.function_words
+   :members:
+
+Pronouns
+^^^^^^^^
+
+.. automodule:: translationese.pronouns
+   :members:
+
+Punctuation
+^^^^^^^^^^^
+
+.. automodule:: translationese.punctuation
+   :members:
+
+Ratio of passive forms to all verbs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.ratio_to_passive_verbs
+   :members:

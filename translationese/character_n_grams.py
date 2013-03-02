@@ -1,23 +1,33 @@
 """\
-Implementation of Lexical Variety hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.4 Interference, Character n-Grams
+We hypothesize that grammatical structure manifests itself in this feature,
+and as in POS `n`-grams, the different grammatical structures used in the
+different source languages interfere with the translations. We also hypothesize
+that this feature captures morphological features of the language. These are
+actually three different features (each tested separately): unigrams, bigrams
+and trigrams of characters. They are computed similarly to the way POS n-grams
+are computed: by the frequencies of `n`-letter occurrences in a chunk,
+normalized by the chunk's size. Two special tokens are added to indicate the
+beginning and end of each word, in order to properly handle specific word
+prefixes and suffixes. We do not capture cross-token character `n`-grams, and
+we exclude punctuation marks.
 """
 
-from nltk.util import ingrams
+import os
+if os.environ.get("READTHEDOCS", None) != 'True':
+    from nltk.util import ingrams
 from translationese.utils import sparse_dict_increment
 
 __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
 
 
-WORD_START = "<"
-WORD_END = ">"
+WORD_START = "<" #: Special token added to start of word
+WORD_END = ">" #: Special token added to end of word
 
-VARIANTS = [0, 1, 2] #: Possible variants
+VARIANTS = [0, 1, 2] #: Possible variants: Unigrams, bigrams, trigrams
 
 class CharacterNGramQuantifier:
+    """Class for quantifying character ``variant``-grams"""
     def __init__(self, variant):
         self.k = variant
         self.histogram = {}
@@ -41,6 +51,7 @@ class CharacterNGramQuantifier:
             self.histogram[key] *= factor
 
     def quantify(self, analysis):
+        """Quantify character `n`-grams."""
         for token in analysis.tokens():
             if not token.isalpha(): continue
             self.__add_token_ngrams(token)
@@ -51,5 +62,6 @@ class CharacterNGramQuantifier:
         return self.histogram
 
 def quantify_variant(analysis, variant):
+    """Quantify character `n`-grams."""
     quantifier = CharacterNGramQuantifier(variant)
     return quantifier.quantify(analysis)

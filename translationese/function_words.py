@@ -1,8 +1,10 @@
-'''
-Created on Dec 4, 2012
-
-@author: ohad
-'''
+"""\
+We aim to replicate the results of Koppel and Ordan (2011) with this feature.
+We use the same list of function words (in fact, some of them are content
+words, but they are all crucial for organizing the text) and implement the same
+feature. Each function word in the corpus is a feature, whose value is the
+normalized frequency of its occurrences in the chunk.
+"""
 
 FUNCTION_WORDS = ['a',
  'about',
@@ -471,8 +473,10 @@ FUNCTION_WORDS = ['a',
  'yours',
  'yourself',
  'yourselves']
+"""Koppel and Ordan's list of `Function Words`"""
 
 def quantify(analysis):
+    """Quantify function words"""
     freq = analysis.histogram_normalized()
     pairs = [ (word, freq.get(word, 0.0)) for word in FUNCTION_WORDS ]
     return dict(pairs)
