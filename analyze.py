@@ -145,44 +145,24 @@ def import_translationese_module(module_name):
     return __import__('translationese.%s' % module_name,
                       fromlist='translationese')
 
-def valid_translationese_module(module):
+def module_proper_name(module_name):
+    """If ``module_name`` is an ordinarily quantifiable module, returns it
+    as-is. If it requires a variant, ``module_name*`` is returned. If it is
+    not quantifiable, ``None`` is returned."""
+
+    module = import_translationese_module(module_name)
+
     if hasattr(module, 'quantify'):
-        return True
-    if hasattr(module, 'quantify_variant'):
-        return True
-    return False
-
-def format_columns(l):
-    """Format a list into two columns.
-
-    >>> print format_columns(["111", "12", "1234", "124", "12"])
-    111  124
-    12   12
-    1234
-    """
-    first_column_length = (len(l) + 1) / 2
-    column_a = l[:first_column_length]
-    column_b = l[first_column_length:]
-    width = max([len(s) for s in column_a])
-
-    if len(column_a) > len(column_b):
-        column_b.append("")
-
-    s = StringIO.StringIO()
-
-    for i in range(len(column_a)):
-        print >> s, column_a[i].ljust(width), column_b[i]
-
-    return s.getvalue().rstrip()
+        return module_name
+    elif hasattr(module, 'quantify_variant'):
+        return '%s*' % module_name
+    else:
+        return None
 
 def available_modules():
     iterator = pkgutil.iter_modules(['translationese'])
-    module_names = list(x[1] for x in iterator
-                        if valid_translationese_module(
-                           import_translationese_module(x[1])
-                         ))
-
-    return format_columns(module_names)
+    available_modules = (module_proper_name(x[1]) for x in iterator)
+    return ' '.join(filter(None, available_modules))
 
 def get_output_stream(outfile, variant, module_name):
     if not outfile:
@@ -197,47 +177,49 @@ def get_output_stream(outfile, variant, module_name):
 
 def cmdline_main():
     """External main() function for calling from commandline."""
-    from optparse import OptionParser
+    from argparse import ArgumentParser
 
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)-15s [%(levelname)-6s] %(message)s')
 
-    usage = "%%prog [options] MODULE\n\n" \
-            "Available modules:\n%s" % available_modules()
+    description = '''
+    Run a translationese analysis of T_DIR and O_DIR, using MODULE. Output
+    is in weka-compatible ARFF format.
+    '''
 
-    parser = OptionParser(usage=usage)
-    parser.add_option("-v", "--variant", dest="variant", default=None,
-                      type="int", help="Variant for analysis module")
-    parser.add_option("-t", dest="t_dir", default='./t/',
-                      help="Directory of T (translated) texts " \
-                           "[default: %default]")
-    parser.add_option("-o", dest="o_dir", default='./o/',
-                      help="Directory of O (original) texts " \
-                           "[default: %default]")
-    parser.add_option("--outfile", dest="outfile",
-                      help="Write output to OUTFILE.\n" \
-                           "[default: MODULE[_VARIANT].arff]")
+    epilog = '''
+    VARIANT is required for modules marked with '*'. VARIANTS are 0-indexed.
+    By default, OUTFILE is MODULE_NAME.arff, with an added variant number if
+    present (e.g. MODULE_NAME_1.arff).
+    '''
 
-    options, args = parser.parse_args()
+    parser = ArgumentParser(description=description, epilog=epilog)
+    parser.add_argument('module', type=str, metavar='MODULE',
+                        help='Available modules: %s' % available_modules())
+    parser.add_argument("-v", "--variant", dest="variant", default=None,
+                        type=int, help="Variant for analysis module")
+    parser.add_argument("-t", dest="t_dir", default='./t/',
+                        help="Directory of T (translated) texts " \
+                             "[default: %(default)s]")
+    parser.add_argument("-o", dest="o_dir", default='./o/',
+                        help="Directory of O (original) texts " \
+                             "[default: %(default)s]")
+    parser.add_argument("--outfile", dest="outfile",
+                        help="Write output to OUTFILE.")
 
-    try:
-        module_name = args[0]
-        module = import_translationese_module(module_name)
-    except IndexError:
-        parser.error("No MODULE specified")
-    except Exception, ex:
-        parser.error(ex)
+    args = parser.parse_args()
 
-    for dir_path in options.t_dir, options.o_dir:
+    module = import_translationese_module(args.module)
+
+    for dir_path in args.t_dir, args.o_dir:
         if not os.path.isdir(dir_path):
             parser.error("No such directory %r (run with --help)" % dir_path)
 
-    outfile = get_output_stream(options.outfile, options.variant, \
-                                module_name)
+    outfile = get_output_stream(args.outfile, args.variant, args.module)
 
-    logging.info("Output will be written to %s", outfile)
-    main(module, o_dir=options.o_dir, t_dir=options.t_dir,
-         variant=options.variant, stream=outfile)
+    logging.info("Output will be written to %s", outfile.name)
+    main(module, o_dir=args.o_dir, t_dir=args.t_dir,
+         variant=args.variant, stream=outfile)
 
 if __name__ == '__main__':
     cmdline_main()
