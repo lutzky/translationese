@@ -1,18 +1,17 @@
-"""\
-Implementation of Lexical Variety hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.1 Simplification, Lexical Variety
 """
+Lexical variety attempts to capture the hypothesis that original texts are
+richer in terms of vocabulary. This is done by comparing the number of `tokens`
+(words, punctuation, etc.) and `types` (of different tokens).
+"""
+
 import math
 from translationese import NoSuchVariant
 
-__author__ = "Ohad Lutzky"
-__email__ = "ohad@lutzky.net"
-
-__variants__ = [0, 1, 2]
+VARIANTS = [0, 1, 2] #: Possible variants
 
 class LexicalVarietyQuantifier:
+    """Class to facilitate analysis of Lexical Variety and its variants."""
+
     def unique_tokens(self):
         """Returns tokens occurring only once in the text."""
         return [ k for k, v in self.analysis.histogram().items() \
@@ -35,7 +34,9 @@ class LexicalVarietyQuantifier:
         return 6 * math.log(self.num_types) / math.log(self.num_tokens)
 
     def unique_type_token_ratio(self):
-        # All tokens are unique - infinite lexical variety
+        """Returns the ratio for unique types. If all tokens are unique,
+        lexical variety is considered to be ``infinity``."""
+
         if self.num_unique_tokens == self.num_types:
             return float("infinity")
 
@@ -43,6 +44,15 @@ class LexicalVarietyQuantifier:
             (1 - (self.num_unique_tokens / float(self.num_types)))
 
 def quantify_variant(analysis, variant):
+    """Quantifies lexical variety. Possible variants:
+
+    0
+        Straight type/token ratio
+    1
+        Logarithmic type/token ratio
+    2
+        Unique type/token ratio
+    """
     quantifier = LexicalVarietyQuantifier(analysis)
     variant_analyzers = {
                          0: quantifier.type_token_ratio,

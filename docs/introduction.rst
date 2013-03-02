@@ -1,26 +1,50 @@
 Introduction
-=============
-The project addresses the difference between translated and original non-translated articles. Those differences, also refered as 'Features' have been discussed and studied in the last three decades. In this project, we wish to quantify this differences. 
+============
 
-It is not trivial to differ between the two group from the look of the naked eye. In order to successed in distinguishing, We use machine learning and classification methods. The classification is done based on these features, estimated during texts analysis. These mentioned features are also refered as 'attributes'.  
+The project addresses the difference between translated and original
+non-translated texts. Those differences, also referred as `features` or
+`attributes`, have been discussed and studied in the last three decades. In
+this project, we wish to quantify these differences. 
 
-For many years, it has been suggested that there are differences between originaly English texts and translated ones. 
-For example, it has been suggested that translated texts have a narrow vocabulary use. Meaning, the number of different words used is smaller among translated text compared to original texts. 
+For a human, it is not trivial to differentiate between the two groups. In
+order to successfully distinguish between them, we use machine learning and
+classification methods. The classification is done based on these features,
+estimated during texts analysis.
 
-Many tried to find the correct and appropriate attributes that will maximize the classification results. In this work, we use all attributes in the classification, to assure a correct separation and minimization of the classification error.
+For many years, it has been suggested that there are differences between
+originally English texts and translated ones.  For example, it has been
+suggested that translated texts have a narrow vocabulary use. Therefore, the
+number of different words used is smaller among translated text compared to
+original texts. (See :py:module:`lexical_variety`).
 
+Many tried to find the correct and appropriate attributes that will maximize
+the classification results. In this work, we try each of these attributes,
+attempting to analyze which ones provide the best separation.
 
-This project is based on 'On The Features Of Translationese' article, written by V. Volansky, N. Ordan and S. Wintner. Our work implements the attributes presented in the article and classify according to this attributes. The analysis was conducted on EUROPARL corpus texts.  
+This project is based on `On The Features Of Translationese` article, written
+by V. Volansky, N. Ordan and S. Wintner. Our work implements the attributes
+presented in the article and classifies texts according to them. The analysis
+was conducted on EUROPARL corpus texts.  
 
-The Attributes are grouped into 5 hypothese categories:
-        1. Simplification - refers to the process of rendering complex linguistic features in the source text into simpler features in the target text.
-          
-        2. Explicitation - refers to the tendency to spell out in the target text utterances that are more implicit in the source.
+The Attributes are grouped into 5 hypothesis categories:
 
-        3. Normalization - refers to the tendency to avoid repetitions, the tendancy to use more formal style, the tendency to overuse fixed expressions even when the source text refrains.
+Simplification
+        The process of rendering complex linguistic features in the
+        source text into simpler features in the target text.
+Explicitation
+        The tendency to spell out in the target text utterances that are more
+        implicit in the source.
+Normalization
+        The tendency to avoid repetitions, use more formal style, and overuse
+        fixed expressions even when the source text refrains.
+Interference
+        Associated with the output of non-native speakers producing utterances
+        in their second language. Operates on different levels from
+        transcribing source language words, through using loan translations, to
+        exerting structural influence.
+Miscellaneous
+        A number of features that cannot be associated with any above
+        hypothesis category.
 
-        4. Interference  - associated with the output of non-native speakers producing utterances in their second language. Operates on different levels from transcribing source language words, through using loan translations, to exerting structual influence.
-
-        5. Miscellaneous - number of features that cannot be associated with any above hypothese.
-
-For more information and details about the attributes nature, navigate to the 'Attributes Documentation' page. 
+For more information and details about the attributes nature, navigate to the
+:ref:`attributes` page.

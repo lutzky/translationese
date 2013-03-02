@@ -9,7 +9,7 @@ from translationese.word_ranks import WORD_RANKS
 
 VERY_HIGH_RANK = 6000
 
-__variants__ = [0, 1]
+VARIANTS = [0, 1] #: Possible variants
 
 def quantify_variant(analysis, variant):
     assert isinstance(analysis, translationese.Analysis)

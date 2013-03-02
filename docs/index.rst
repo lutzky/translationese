@@ -3,29 +3,35 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-translationese's documentation!
-===============================
+Analysis of Translationese
+==========================
 
-Welcome to the introduction page of the translationsese project.
-The project was developed via Natural Language Processing  Labratory.
+This project analyzes the various features attributed to a language known as
+`translationese`.  The project was developed in the Natural Language Processing
+Laboratory, under the supervision of Prof. Shuly Wintner.
 
-The projects idea
-------------------
-The project's goal is distinguishing between articles that were originaly
-written in English and articles written in foreign languages and were
-translated into English. This is done based on feature and characteristics
-found within the articles texts.
+Project description
+-------------------
 
-The tools
+The project's goal is distinguishing between texts that were originally written
+in English ("`O`" texts) and texts written in foreign languages and were
+translated into English ("`T`" texts). This is done based on features and
+characteristics found within the texts.
+
+Tools used
 ----------
-1. Weka 3.7     - Classification tool   arff files for each feature.
-2. Nltk Library - Text processing and analysis using nltk library.
-3. Sphinx       - Used for documentation.
-4. Python 2.7   - processing and analysis written code.
+
+Python 2.7
+    Code for processing, analyzing and self-testing.
+NLTK Library
+    Natural Language ToolKit for python. Text processing and analysis was
+    performed using this library.
+Weka 3.7
+    Classification tool. Uses ARFF files as input.
+Sphinx
+    Documentation generator.
 
 We want to thank our guide, Prof. Shuly Wintner.
-
-For more information, navigate to the following pages:
 
 .. toctree::
    :maxdepth: 2
@@ -40,4 +46,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

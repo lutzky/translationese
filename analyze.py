@@ -195,8 +195,8 @@ def analyze_all_modules(o_dir, t_dir, dest_dir):
     for module in available_modules_imported():
         module_name = module.__name__.split('.')[-1]
         logging.info("Analyzing with %s", module_name)
-        if hasattr(module, '__variants__'):
-            for v in module.__variants__:
+        if hasattr(module, 'VARIANTS'):
+            for v in module.VARIANTS:
                 logging.info("Variant %d", v)
                 outfile = get_output_stream(None, v, module_name, dest_dir)
                 cmdline_main_one_module(module, o_dir, t_dir, v, outfile)

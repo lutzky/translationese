@@ -15,7 +15,7 @@ __email__ = "ohad@lutzky.net"
 WORD_START = "<"
 WORD_END = ">"
 
-__variants__ = [0, 1, 2]
+VARIANTS = [0, 1, 2] #: Possible variants
 
 class CharacterNGramQuantifier:
     def __init__(self, variant):
