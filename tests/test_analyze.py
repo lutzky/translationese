@@ -20,7 +20,7 @@ class TestAnalyze(unittest.TestCase):
 
     def assertResultForModule(self, module, expected, variant=None):
         s = StringIO.StringIO()
-        analyze.main(module, self.o_dir, self.t_dir, s, variant)
+        analyze.main(module, self.o_dir, self.t_dir, s, variant, timer_stream=None)
         self.assertMultiLineEqual(expected, s.getvalue())
 
     def testWithPunctuation(self):

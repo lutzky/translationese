@@ -1,25 +1,4 @@
 """Various utilities for translationese analysis"""
-import itertools
-
-#: Possible part-of-speech tags
-possible_tags = [
-    "$", "''", "(", ")", ",", "--", ".", ":", "CC", "CD", "DT", "EX", "FW",
-    "IN", "JJ", "JJR", "JJS", "LS", "MD", "NN", "NNP", "NNPS", "NNS", "PDT",
-    "POS", "PRP", "PRP$", "RB", "RBR", "RBS", "RP", "SYM", "TO", "UH", "VB",
-    "VBD", "VBG", "VBN", "VBP", "VBZ", "WDT", "WP", "WP$", "WRB", "``", 
-    "-NONE-",
-]
-
-def set_cartesian_power(s, n):
-    """Returns the set s raised to the power of n; the cartesian product of
-    s with itself n times. Returned as an iterator.
-
-    >>> list(set_cartesian_power([1,2,3], 2))
-    [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)]
-    """
-
-    sets_to_multiply = [s] * n
-    return itertools.product(*sets_to_multiply)
 
 def output_filter_ngram(ngram):
     """Returns the ngram in a form suitable for ARFF output.
@@ -53,5 +32,16 @@ def is_proper_noun(token_tag_pair):
     True
     """
 
-    token, tag = token_tag_pair
+    tag = token_tag_pair[1]
     return tag.startswith("NNP")
+
+def sparse_dict_increment(d, k):
+    """Increment key ``k`` in dictionary ``d``, assuming 0 if missing.
+
+    >>> d = {}
+    >>> sparse_dict_increment(d, "key")
+    >>> sparse_dict_increment(d, "key")
+    >>> d
+    {'key': 2}
+    """
+    d[k] = d.get(k, 0) + 1

@@ -10,6 +10,7 @@ from translationese import NoSuchVariant
 __author__ = "Ohad Lutzky"
 __email__ = "ohad@lutzky.net"
 
+__variants__ = [0, 1, 2]
 
 class LexicalVarietyQuantifier:
     def unique_tokens(self):

@@ -13,42 +13,59 @@ import translationese
 import time
 import pkgutil
 import logging
+from translationese import MissingVariant
+import errno
 
 class Timer:
-    def __init__(self, report_every = 10, stream=sys.stderr):
+    """Simple progress reporter. Call ``increment`` for every event
+    which occurs, and every ``report_every`` seconds the count and
+    average time will be displayed."""
+
+    def __init__(self, report_every=1, stream=sys.stderr):
         self.report_every = report_every
         self.stream = stream
 
+        self.started_at = 0
+        self.count = 0
+        self.prevtime = 0
+
     def start(self):
+        """[re-]start the timer"""
         self.started_at = time.time()
         self.prevtime = self.started_at
         self.count = 0
 
-    def increment(self):
-        self.count += 1
-        if time.time() - self.prevtime > 1:
-            elapsed = time.time() - self.started_at
-            average_ms = 1000.0 * (elapsed / self.count)
+    def output(self):
+        elapsed = time.time() - self.started_at
+        average_ms = 1000.0 * (elapsed / self.count)
+        if self.stream:
             self.stream.write(\
                     "\r[%5d] %d seconds elapsed, (%.2f ms each)" \
                     % (self.count, elapsed, average_ms))
+            self.stream.flush()
+
+    def increment(self):
+        """Report an event as having occured."""
+        self.count += 1
+        if time.time() - self.prevtime > self.report_every:
+            self.output()
             self.prevtime = time.time()
 
-    def finish(self):
-        self.stream.write("\n")
-
-_timer = None
+    def stop(self):
+        """Stop the timer, properly formatting end-of-line."""
+        self.output()
+        if self.stream:
+            self.stream.write("\n")
 
 def analyze_file(filename, analyzer_module, variant=None):
-    with translationese.Analysis(filename = filename) as analysis:
+    with translationese.Analysis(filename=filename) as analysis:
         if variant is not None:
             return analyzer_module.quantify_variant(analysis, variant)
         else:
             return analyzer_module.quantify(analysis)
 
 def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
-                      variant=None):
-    attributes = set()
+                      variant, timer):
     results = []
 
     for filename in sorted(os.listdir(dir_to_analyze)):
@@ -58,6 +75,7 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
         filename = os.path.join(dir_to_analyze, filename)
         try:
             result = analyze_file(filename, analyzer_module, variant)
+            timer.increment()
         except:
             logging.error("Error analyzing file %s", filename)
             raise
@@ -66,11 +84,12 @@ def analyze_directory(dir_to_analyze, expected_class, analyzer_module,
 
     return results
 
-def print_results(results, stream):
+def print_results(results, stream, timer):
     attributes = set()
 
     print >> stream, "@relation translationese"
 
+    logging.info("Merging result keys")
     for result, _ in results:
         attributes.update(result.keys())
 
@@ -85,83 +104,163 @@ def print_results(results, stream):
     print >> stream
     print >> stream, "@data"
 
+    logging.info("Printing results")
+
+    timer.start()
     for result, expected_class in results:
-        line = ",".join([str(result[x]) for x in attributes])
+        line = ",".join([str(result.get(x, 0)) for x in attributes])
 
         print >> stream, "%s,%s" % (line, expected_class)
-        if _timer: _timer.increment()
+        timer.increment()
+    timer.stop()
 
-def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None):
+def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None,
+         timer_stream=sys.stdout):
+    """Internal, testable main() function for analysis."""
     if variant is None:
         if not hasattr(analyzer_module, "quantify"):
-            raise translationese.MissingVariant("%s requires a variant to be specified" % \
-                                                analyzer_module.__name__)
+            raise MissingVariant("%s requires a variant to be specified" % \
+                                 analyzer_module.__name__)
     elif not hasattr(analyzer_module, "quantify_variant"):
         raise translationese.NoVariants("%s does not support variants" % \
                                         analyzer_module.__name__)
 
-    if _timer: _timer.start()
+    timer = Timer(stream=timer_stream)
 
     results = []
 
-    results += analyze_directory(o_dir, "O", analyzer_module, variant)
-    results += analyze_directory(t_dir, "T", analyzer_module, variant)
+    logging.info("Analyzing 'O' directory %s", o_dir)
+    timer.start()
+    results += analyze_directory(o_dir, "O", analyzer_module, variant, timer)
+    timer.stop()
 
-    print_results(results, stream)
+    logging.info("Analyzing 'T' directory %s", t_dir)
+    timer.start()
+    results += analyze_directory(t_dir, "T", analyzer_module, variant, timer)
+    timer.stop()
 
-def available_modules():
-    iterator = pkgutil.iter_modules(['translationese'])
-    return ( x[1] for x in iterator )
+    print_results(results, stream, timer)
 
-def get_output_stream(auto_outfile, variant, module_name):
-    if auto_outfile:
-        if variant is None:
-            outfile_name = "%s.arff" % module_name
-        else:
-            outfile_name = "%s_%d.arff" % (module_name, variant)
+def import_translationese_module(module_name):
+    return __import__('translationese.%s' % module_name,
+                      fromlist='translationese')
 
-        outfile = open(outfile_name, "w")
+def module_proper_name(module_name):
+    """If ``module_name`` is an ordinarily quantifiable module, returns it
+    as-is. If it requires a variant, ``module_name*`` is returned. If it is
+    not quantifiable, ``None`` is returned."""
+
+    module = import_translationese_module(module_name)
+
+    if hasattr(module, 'quantify'):
+        return module_name
+    elif hasattr(module, 'quantify_variant'):
+        return '%s*' % module_name
     else:
-        outfile = sys.stdout
+        return None
 
-    return outfile
+def formatted_available_modules():
+    iterator = pkgutil.iter_modules(['translationese'])
+    result = (module_proper_name(x[1]) for x in iterator)
+    return ' '.join(filter(None, result))
 
-if __name__ == '__main__':
-    from optparse import OptionParser
-    _timer = Timer()
+def available_modules_imported():
+    iterator = pkgutil.iter_modules(['translationese'])
+    for _, module_name, _ in iterator:
+        yield import_translationese_module(module_name)
 
-    usage="%%prog [options] MODULE\n\n" \
-            "Available modules:\n%s" % \
-            "\n".join([ "  %s" % x for x in available_modules() ])
+def get_output_stream(outfile, variant, module_name, dest_dir=None):
+    if dest_dir:
+        try:
+            os.makedirs(dest_dir)
+        except OSError, ex:
+            if ex.errno == errno.EEXIST:
+                pass
+            else:
+                raise
+    else:
+        dest_dir = '.'
 
-    parser = OptionParser(usage=usage)
-    parser.add_option("-v", "--variant", dest="variant", default=None,
-                      type="int", help="Variant for analysis module")
-    parser.add_option("-t", dest="t_dir", default='./o/',
-                      help="Directory of T (translated) texts\n[default: %default]")
-    parser.add_option("-o", dest="o_dir", default='./t/',
-                      help="Directory of O (original) texts [default: %default]")
-    parser.add_option("--auto-outfile", dest="auto_outfile", action="store_true",
-                      help="Write output to MODULE[_VARIANT].arff")
+    if not outfile:
+        if variant is None:
+            outfile = "%s.arff" % module_name
+        else:
+            outfile = "%s_%d.arff" % (module_name, variant)
 
-    options, args = parser.parse_args()
+    outstream = open(os.path.join(dest_dir, outfile), "w")
 
-    try:
-        module_name = args[0]
-        module = __import__("translationese.%s" % module_name, \
-                            fromlist=module_name)
-    except IndexError:
-        parser.error("No MODULE specified")
-    except Exception, ex:
-        parser.error(ex)
+    return outstream
 
-    for dir_path in options.t_dir, options.o_dir:
+def analyze_all_modules(o_dir, t_dir, dest_dir):
+    for module in available_modules_imported():
+        module_name = module.__name__.split('.')[-1]
+        logging.info("Analyzing with %s", module_name)
+        if hasattr(module, '__variants__'):
+            for v in module.__variants__:
+                logging.info("Variant %d", v)
+                outfile = get_output_stream(None, v, module_name, dest_dir)
+                cmdline_main_one_module(module, o_dir, t_dir, v, outfile)
+        else:
+            outfile = get_output_stream(None, None, module_name, dest_dir)
+            cmdline_main_one_module(module, o_dir, t_dir, None, outfile)
+
+def cmdline_main():
+    """External main() function for calling from commandline."""
+    from argparse import ArgumentParser
+
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)-15s [%(levelname)-6s] %(message)s')
+
+    description = '''
+    Run a translationese analysis of T_DIR and O_DIR, using MODULE. Output
+    is in weka-compatible ARFF format.
+
+    Specify 'ALL' as the module to automatically run all possible variants on
+    all possible modules.
+    '''
+
+    epilog = '''
+    VARIANT is required for modules marked with '*'. VARIANTS are 0-indexed.
+    By default, OUTFILE is MODULE_NAME.arff, with an added variant number if
+    present (e.g. MODULE_NAME_1.arff).
+    '''
+
+    parser = ArgumentParser(description=description, epilog=epilog)
+    parser.add_argument('module_name', type=str, metavar='MODULE',
+                        help='Available modules: %s (or ALL)' \
+                        % formatted_available_modules())
+    parser.add_argument("-v", "--variant", dest="variant", default=None,
+                        type=int, help="Variant for analysis module")
+    parser.add_argument("-t", dest="t_dir", default='./t/',
+                        help="Directory of T (translated) texts " \
+                             "[default: %(default)s]")
+    parser.add_argument("-o", dest="o_dir", default='./o/',
+                        help="Directory of O (original) texts " \
+                             "[default: %(default)s]")
+    parser.add_argument("--outfile", dest="outfile",
+                        help="Write output to OUTFILE.")
+    parser.add_argument("-d", "--dest-dir", dest="dest_dir",
+                        help="OUTFILE[s] will be created in DEST_DIR.")
+
+    args = parser.parse_args()
+
+    for dir_path in args.t_dir, args.o_dir:
         if not os.path.isdir(dir_path):
             parser.error("No such directory %r (run with --help)" % dir_path)
 
-    outfile = get_output_stream(options.auto_outfile, options.variant, \
-                                module_name)
+    if args.module_name == 'ALL':
+        analyze_all_modules(args.o_dir, args.t_dir, args.dest_dir)
+    else:
+        outfile = get_output_stream(args.outfile, args.variant,
+                                    args.module_name, args.dest_dir)
+        module = import_translationese_module(args.module_name)
+        cmdline_main_one_module(module, args.o_dir, args.t_dir,
+                                args.variant, outfile)
 
-    main(module, options.o_dir, options.t_dir, variant=options.variant, \
-            stream=outfile)
-    if _timer: _timer.finish()
+def cmdline_main_one_module(module, o_dir, t_dir, variant, outfile):
+    logging.info("Output will be written to %s", outfile.name)
+    main(module, o_dir=o_dir, t_dir=t_dir,
+         variant=variant, stream=outfile)
+
+if __name__ == '__main__':
+    cmdline_main()

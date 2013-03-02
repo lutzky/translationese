@@ -1,4 +1,4 @@
-from translationese.utils import output_filter_ngram
+from translationese.utils import output_filter_ngram, sparse_dict_increment
 from translationese.function_words import FUNCTION_WORDS
 import nltk.util
 
@@ -24,6 +24,6 @@ def quantify(analysis):
 
     for trigram in nltk.util.itrigrams(word_stream):
         if trigram_is_functional(trigram):
-            d[trigram] = d.get(trigram, 0) + 1
+            sparse_dict_increment(d, trigram)
 
     return {output_filter_ngram(k): (v / num_tokens) for (k, v) in d.items()}

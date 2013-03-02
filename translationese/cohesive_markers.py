@@ -6,6 +6,7 @@ Origin: On the Features of Translationese, VV, NO & SW
 """
 
 import nltk
+from translationese.utils import sparse_dict_increment
 
 COHESIVE_MARKERS = ["as for",
 "as to",
@@ -50,17 +51,15 @@ COHESIVE_MARKERS = ["as for",
 
 def quantify(analysis):
     result = {}
-    for marker in COHESIVE_MARKERS:
-        result[marker] = result.get(marker, 0)
     
     tokenized_markers = [(marker,nltk.word_tokenize(marker)) for marker in COHESIVE_MARKERS]
     text = analysis.tokens()
     
-    for (i,word) in enumerate(text):
+    for i, _ in enumerate(text):
         for (marker,tokenized) in tokenized_markers:
             if (tokenized == text[i:i+len(tokenized)]):
-                result[marker] = result.get(marker, 0) + 1
+                sparse_dict_increment(result, marker)
 
-    pairs = [ (marker, float(result[marker]) / len(text)) for marker in COHESIVE_MARKERS]
+    pairs = [ (marker, float(result[marker]) / len(text)) for marker in result.keys()]
     
     return dict(pairs)
