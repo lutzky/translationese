@@ -23,7 +23,6 @@ def quantify(analysis):
             if (text[i][0] == 'be') and (is_VBN_verb(text[i+1][1])):
                 passive_verbs += 1
         
-        print passive_verbs
         return float(passive_verbs)
     
     result = float(count_all_passive_verbs() / count_all_verbs())
