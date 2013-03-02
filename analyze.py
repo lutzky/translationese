@@ -167,7 +167,9 @@ def formatted_available_modules():
 def available_modules_imported():
     iterator = pkgutil.iter_modules(['translationese'])
     for _, module_name, _ in iterator:
-        yield import_translationese_module(module_name)
+        module = import_translationese_module(module_name)
+        if hasattr(module, 'quantify') or hasattr(module, 'quantify_variant'):
+            yield module
 
 def get_output_stream(outfile, variant, module_name, dest_dir=None):
     if dest_dir:
