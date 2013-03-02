@@ -5998,3 +5998,7 @@ WORD_RANKS = {
   "ham": 4998,
   "dreamed": 5001,
 }
+
+_hard_limit = 100
+_high_ranking_words = [word for (word, rank) in WORD_RANKS.items() if rank < _hard_limit]
+TOP_WORDS = sorted(_high_ranking_words, key=lambda word: WORD_RANKS[word])
