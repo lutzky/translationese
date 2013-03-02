@@ -14,7 +14,7 @@ import time
 import pkgutil
 import logging
 from translationese import MissingVariant
-import StringIO
+import errno
 
 class Timer:
     """Simple progress reporter. Call ``increment`` for every event
@@ -159,21 +159,50 @@ def module_proper_name(module_name):
     else:
         return None
 
-def available_modules():
+def formatted_available_modules():
     iterator = pkgutil.iter_modules(['translationese'])
-    available_modules = (module_proper_name(x[1]) for x in iterator)
-    return ' '.join(filter(None, available_modules))
+    result = (module_proper_name(x[1]) for x in iterator)
+    return ' '.join(filter(None, result))
 
-def get_output_stream(outfile, variant, module_name):
+def available_modules_imported():
+    iterator = pkgutil.iter_modules(['translationese'])
+    for _, module_name, _ in iterator:
+        yield import_translationese_module(module_name)
+
+def get_output_stream(outfile, variant, module_name, dest_dir=None):
+    if dest_dir:
+        try:
+            os.makedirs(dest_dir)
+        except OSError, ex:
+            if ex.errno == errno.EEXIST:
+                pass
+            else:
+                raise
+    else:
+        dest_dir = '.'
+
     if not outfile:
         if variant is None:
             outfile = "%s.arff" % module_name
         else:
             outfile = "%s_%d.arff" % (module_name, variant)
 
-    outstream = open(outfile, "w")
+    outstream = open(os.path.join(dest_dir, outfile), "w")
 
     return outstream
+
+def analyze_all_modules(o_dir, t_dir, dest_dir):
+    for module in available_modules_imported():
+        module_name = module.__name__.split('.')[-1]
+        logging.info("Analyzing with %s", module_name)
+        if hasattr(module, '__variants__'):
+            for v in module.__variants__:
+                logging.info("Variant %d", v)
+                outfile = get_output_stream(None, v, module_name, dest_dir)
+                cmdline_main_one_module(module, o_dir, t_dir, v, outfile)
+        else:
+            outfile = get_output_stream(None, None, module_name, dest_dir)
+            cmdline_main_one_module(module, o_dir, t_dir, None, outfile)
 
 def cmdline_main():
     """External main() function for calling from commandline."""
@@ -185,6 +214,9 @@ def cmdline_main():
     description = '''
     Run a translationese analysis of T_DIR and O_DIR, using MODULE. Output
     is in weka-compatible ARFF format.
+
+    Specify 'ALL' as the module to automatically run all possible variants on
+    all possible modules.
     '''
 
     epilog = '''
@@ -194,8 +226,9 @@ def cmdline_main():
     '''
 
     parser = ArgumentParser(description=description, epilog=epilog)
-    parser.add_argument('module', type=str, metavar='MODULE',
-                        help='Available modules: %s' % available_modules())
+    parser.add_argument('module_name', type=str, metavar='MODULE',
+                        help='Available modules: %s (or ALL)' \
+                        % formatted_available_modules())
     parser.add_argument("-v", "--variant", dest="variant", default=None,
                         type=int, help="Variant for analysis module")
     parser.add_argument("-t", dest="t_dir", default='./t/',
@@ -206,20 +239,28 @@ def cmdline_main():
                              "[default: %(default)s]")
     parser.add_argument("--outfile", dest="outfile",
                         help="Write output to OUTFILE.")
+    parser.add_argument("-d", "--dest-dir", dest="dest_dir",
+                        help="OUTFILE[s] will be created in DEST_DIR.")
 
     args = parser.parse_args()
-
-    module = import_translationese_module(args.module)
 
     for dir_path in args.t_dir, args.o_dir:
         if not os.path.isdir(dir_path):
             parser.error("No such directory %r (run with --help)" % dir_path)
 
-    outfile = get_output_stream(args.outfile, args.variant, args.module)
+    if args.module_name == 'ALL':
+        analyze_all_modules(args.o_dir, args.t_dir, args.dest_dir)
+    else:
+        outfile = get_output_stream(args.outfile, args.variant,
+                                    args.module_name, args.dest_dir)
+        module = import_translationese_module(args.module_name)
+        cmdline_main_one_module(module, args.o_dir, args.t_dir,
+                                args.variant, outfile)
 
+def cmdline_main_one_module(module, o_dir, t_dir, variant, outfile):
     logging.info("Output will be written to %s", outfile.name)
-    main(module, o_dir=args.o_dir, t_dir=args.t_dir,
-         variant=args.variant, stream=outfile)
+    main(module, o_dir=o_dir, t_dir=t_dir,
+         variant=variant, stream=outfile)
 
 if __name__ == '__main__':
     cmdline_main()
