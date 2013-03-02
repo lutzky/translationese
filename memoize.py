@@ -1,5 +1,13 @@
-"""Usable as a wrapper to a method, caches execution results.
+"""
+This module provides the ``@memoize`` decorator, which is used as
+a method decorator. Decorating a method with ``@memoize`` will cause
+its result to be cached in the hidden ``_memoize_cache`` property, and subsequent calls will return this cache.
 
+This particular implementation of memoize does not support methods with
+arguments (other than the implicit ``self`` argument). However, it *does*
+support :mod:`pickle` serialization.
+
+>>> from memoize import memoize
 >>> class K:
 ...     def __init__(self):
 ...         self.x = 5
@@ -36,6 +44,8 @@ def memoize(func):
     return wrapper
 
 def load(obj, filename):
+    """Loads :mod:`pickle` data (saved by :func:`dump`) from ``filename``
+    and injects it into ``obj``'s cache."""
     try:
         if os.path.exists(filename):
             with open(filename, "r") as f:
@@ -44,6 +54,8 @@ def load(obj, filename):
         logging.warn("Invalid pickle file %s", filename)
 
 def dump(obj, filename):
+    """Dumps ``obj``'s memoized cache as :mod:`pickle` data into ``filename``.
+    """
     if hasattr(obj, "_memoize_cache"):
         with open(filename, "w") as f:
             pickle.dump(obj._memoize_cache, f)

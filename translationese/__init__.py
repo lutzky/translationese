@@ -10,8 +10,15 @@ if os.environ.get("READTHEDOCS", None) != 'True':
 expected_chunk_size = 2000.0
 
 class Analysis(object):
-    """Module to represent and cache an NLTK analysis of a given text. Can
-    be initialized either from a file (``stream``) or from ``fulltext``."""
+    """This class represent and caches an :mod:`nltk` analysis of a given text.
+    The text can be initialized either from a file (``stream``) or from
+    ``fulltext``.
+
+    All analyses performed by this class are cached using :mod:`memoize`, so
+    they can be re-run cheaply. Also, when text is loaded using ``filename``,
+    this object will be saved using :mod:`pickle` to a file with ``.analysis``
+    appended to its name. Consequent analyses will load cached data.
+    """
 
     def __init__(self, fulltext=None, stream=None, filename=None):
         self.filename = None
@@ -165,9 +172,18 @@ class Analysis(object):
         return dict(bigram_pmi_pairs)
 
 import exceptions
-class MissingVariant(exceptions.Exception): pass
-class NoVariants(exceptions.Exception): pass
+class MissingVariant(exceptions.Exception):
+    """Exception thrown when no variant was specified when quantifying using
+    a module that requires a variant specification."""
+    pass
+
+class NoVariants(exceptions.Exception):
+    """Exception thrown when a variant was specified when quantifying using
+    a module that does not support variant specification."""
+    pass
 
 class NoSuchVariant(exceptions.Exception):
+    """Exception thrown when an invalid variant was specified when quantifying
+    using a module that supports variant specification."""
     def __init__(self):
         Exception.__init__(self, "Invalid variant requested")
