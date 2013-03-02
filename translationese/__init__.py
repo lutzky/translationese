@@ -11,7 +11,7 @@ expected_chunk_size = 2000.0
 
 class Analysis(object):
     """Module to represent and cache an NLTK analysis of a given text. Can
-    be initialized either from a file (stream) or fulltext as a parameter."""
+    be initialized either from a file (``stream``) or from ``fulltext``."""
 
     def __init__(self, fulltext=None, stream=None, filename=None):
         self.filename = None
@@ -51,6 +51,7 @@ class Analysis(object):
 
     @memoize.memoize
     def case_tokens(self):
+        """Same as ``tokens``, but case-sensitive."""
         # We tokenize into sentences and then into words due to a warning
         # in the NLTK API doc to only word_tokenize single sentences.
         tokens = []
@@ -106,16 +107,21 @@ class Analysis(object):
     @memoize.memoize
     def tokens(self):
         """Tokens are always in lowercase. For tokens with the original
-        case, use case_tokens()."""
+        case, use ``case_tokens()``."""
         return [ w.lower() for w in self.case_tokens() ]
 
     @memoize.memoize
     def tokens_set(self):
+        """Same as ``tokens``, but as a ``set``."""
         return set(self.tokens())
 
     @memoize.memoize
     def histogram(self):
-        """Return a dictionary { "TOKEN": NUMBER_OF_OCCURENCES, ... }"""
+        """Return a histogram of tokens in the text.
+        
+        >>> Analysis("Hello, hello world.").histogram()
+        {'world': 1, '.': 1, 'hello': 2, ',': 1}
+        """
         result = {}
         for t in self.tokens():
             sparse_dict_increment(result, t)
@@ -123,15 +129,18 @@ class Analysis(object):
 
     @memoize.memoize
     def histogram_normalized(self):
-        """Returns histogram normalized by number of tokens"""
+        """Same as ``histogram``, but normalized by number of tokens."""
         items = self.histogram().items()
         num_tokens = float(len(self.tokens()))
         items_normalized = [ (x, y / num_tokens) for x, y in items ]
         return dict(items_normalized)
 
-    @memoize.memoize
     def bigrams(self):
-        """Return a dictionary { ("w1", "w2"): NUMBER_OF_OCCURENCES, ... }"""
+        """Returns a histogram of bigrams in the text.
+        
+        >>> Analysis("Hello hello hello world").bigrams()
+        {('hello', 'world'): 1, ('hello', 'hello'): 2}
+        """
         result = {}
         for i in range(len(self.tokens()) - 1):
             bigram = (self.tokens()[i], self.tokens()[i + 1])
@@ -139,6 +148,7 @@ class Analysis(object):
         return result
 
     def pmi(self):
+        """PMI, as calculated in the article."""
         num_bigrams = float(len(self.tokens()) - 1)
         bigrams_normalized = dict([ (x, y / num_bigrams)
                                     for (x, y) in self.bigrams().items() ])
