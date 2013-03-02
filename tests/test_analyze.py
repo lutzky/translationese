@@ -11,12 +11,21 @@ import translationese.lexical_variety
 import os.path
 
 class TestAnalyze(unittest.TestCase):
+    def cleanup(self):
+        for root, dirs, files in os.walk(self.tests_dir):
+            for f in files:
+                if f.endswith(".analysis"):
+                    os.unlink(os.path.join(root, f))
+
     def setUp(self):
         self.maxDiff = None
-        tests_dir = os.path.join(os.path.dirname(__file__), "test_data")
-        self.o_dir = os.path.join(tests_dir, "o")
-        self.t_dir = os.path.join(tests_dir, "t")
-        os.system("find %s -name '*.analysis' -delete" % tests_dir)
+        self.tests_dir = os.path.join(os.path.dirname(__file__), "test_data")
+        self.o_dir = os.path.join(self.tests_dir, "o")
+        self.t_dir = os.path.join(self.tests_dir, "t")
+        self.cleanup()
+
+    def tearDown(self):
+        self.cleanup()
 
     def assertResultForModule(self, module, expected, variant=None):
         s = StringIO.StringIO()
