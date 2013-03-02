@@ -1,5 +1,8 @@
 import translationese
 from translationese import word_ranks
+
+__variants__ = [0, 1, 2]
+
 def quantify_variant(analysis, variant):
     assert isinstance(analysis, translationese.Analysis)
 

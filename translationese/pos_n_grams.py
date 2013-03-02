@@ -6,6 +6,8 @@ Origin
 from translationese.utils import output_filter_ngram, sparse_dict_increment
 from nltk.util import ingrams
 
+__variants__ = [0, 1, 2]
+
 def quantify_variant(analysis, variant):
     n = variant + 1
 

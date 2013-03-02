@@ -9,6 +9,8 @@ import translationese
 punctuation_marks = [ '?', '!', ':', ';', '-', '(', ')', '[', ']',
                       "'", '"', '/', ',', '.' ]
 
+__variants__ = [0, 1, 2]
+
 def count_punctuation_marks(analysis):
     histogram = dict([ (x, 0) for x in punctuation_marks ])
     count = 0
