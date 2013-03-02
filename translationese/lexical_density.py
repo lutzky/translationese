@@ -1,14 +1,12 @@
 """\
-Implementation of Lexical Density hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.1 Simplification, Lexical Density
+The frequency of tokens that are `not` nouns, adjectives, adverbs or verbs.
 """
 
 __author__ = "Gal Star"
 __email__ = "gal.star3051@gmail.com"
 
 def quantify(analysis):
+    """Quantify lexical density."""
     all_tags = analysis.tokens()
     
     def is_lexical_density(letter):    

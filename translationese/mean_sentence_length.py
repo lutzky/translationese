@@ -1,12 +1,11 @@
 """\
-Implementation of Mean Sentence Length hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.1 Simplification, Mean Sentence Length
+Splitting sentences is a common strategy in translation, which is also
+considered a form of simplification. Long and complicated sentences may be
+simplified and split into short, simple sentences. Hence we assume that
+translations contain shorter sentences than original texts.
 """
 
-import nltk
-
 def quantify(analysis):
+    """Quantify mean sentence length."""
     result = len(analysis.tokens()) / float(len(analysis.sentences()))
     return { "mean_sentence_length": result }

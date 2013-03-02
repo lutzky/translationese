@@ -1,17 +1,25 @@
 """\
-Implementation of Mean Word Rank hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.1 Simplification, Mean Word Rank
+We assume that less frequent words are used more often in original texts than
+in translated ones.
 """
+
 import translationese
 from translationese.word_ranks import WORD_RANKS
 
 VERY_HIGH_RANK = 6000
+"""Very high rank for a word, guessed for unknown words. The highest rank
+for known words is 5000."""
 
-VARIANTS = [0, 1] #: Possible variants
+VARIANTS = [0, 1]
+"""Possible variants for this hypothesis.
+
+0. Words not in this list are given a unique highest rank of ``VERY_HIGH_RANK``.
+
+1. Words not in the list are ignored altogether.
+"""
 
 def quantify_variant(analysis, variant):
+    """Quantify mean word rank."""
     assert isinstance(analysis, translationese.Analysis)
 
     count = 0

@@ -27,3 +27,17 @@ by V. Volansky, N. Ordan and S. Wintner. Our work implements the hypotheses
 them. The analysis was conducted on EUROPARL corpus texts.
 
 The hypotheses analyzed are detailed in the :ref:`hypotheses` page.
+
+Notes
+-----
+
+The following questions remain open when analyzing the original article:
+
+#. Why are some features (e.g. :mod:`translationese.lexical_variety`)
+   `magnified` by a constant? This should have no effect on any reasonable
+   machine-learning analysis mechanism.
+
+#. Some features are normalized by actual chunk length (in tokens), whereas
+   some features are normalized by corpus-average chunk length (2000 tokens,
+   in this instance and originally). It is not clearly specified when which
+   is done, nor is a reason given.

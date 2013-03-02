@@ -21,6 +21,8 @@ The :mod:`translationese.lexical_variety` module quantifies this hypothesis by
 counting the amount of different words in a given text. The value is expected
 to be lower for translated texts.
 
+.. _extending:
+
 Aspects of Implementation
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -107,11 +109,8 @@ Lexical variety
 .. automodule:: translationese.lexical_variety
    :members:
 
-Mean word length
-^^^^^^^^^^^^^^^^
-
-less frequent words are used more often in original texts.
-
+Mean word length (in characters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: translationese.mean_word_length
    :members:
@@ -119,15 +118,11 @@ less frequent words are used more often in original texts.
 Syllable ratio
 ^^^^^^^^^^^^^^
 
-translated texts resulting in fewer syllable per word.
-
 .. automodule:: translationese.syllable_ratio
    :members:
 
 Lexical density
 ^^^^^^^^^^^^^^^
-
-frequency of tokens that aren't nouns, adjective, adverbs and verbs.
 
 .. automodule:: translationese.lexical_density
    :members:
@@ -138,14 +133,19 @@ Mean sentence length
 .. automodule:: translationese.mean_sentence_length
    :members:
 
+Mean word rank
+^^^^^^^^^^^^^^
+
+.. automodule:: translationese.mean_word_rank
+   :members:
+
 Most frequent words
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: translationese.most_frequent_words
    :members:
 
 N most frequent words in the corpus.
-
 
 Explicitation
 -------------
@@ -153,20 +153,62 @@ Explicitation
 The tendency to spell out in the target text utterances that are more implicit
 in the source.
 
-  * Explicit naming      - the use of a personal pronoun as a clarification of a proper noun.
-  * Single naming
-  * Mean multiple naming - average length in tokens of proper nouns.
-  * Cohesive markers     - translation texts known to use more cohesive markers. pointed 40 markers in list.
+Explicit naming
+^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.explicit_naming
+   :members:
+
+Single naming
+^^^^^^^^^^^^^
+
+.. automodule:: translationese.single_naming
+   :members:
+
+Mean multiple naming
+^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.mean_multiple_naming
+   :members:
+
+Cohesive markers
+^^^^^^^^^^^^^^^^
+
+.. automodule:: translationese.cohesive_markers
+   :members:
 
 Normalization
 -------------
-The tendency to avoid repetitions, use more formal style, and overuse fixed
-expressions even when the source text refrains.
 
-  * Repetitions         - number of content words that occure more than once in a chunck.
-  * Contractions        - ratio of contracted forms to their counterpart full forms.
-  * Average PMI         - original texts use more collocations.
-  * Threshold PMI
+Translators take great efforts to standardize texts.  We include in this the
+tendency to avoid repetitions, the tendency to use a more formal style
+manifested in refraining from the use of contractions, and the tendency to
+overuse fixed expressions even when the source text refrains, sometime
+deliberately, from doing so.
+
+Repetitions
+^^^^^^^^^^^
+
+.. automodule:: translationese.repetitions
+   :members:
+
+Contractions
+^^^^^^^^^^^^
+
+.. automodule:: translationese.contractions
+   :members:
+
+Average PMI
+^^^^^^^^^^^
+
+.. automodule:: translationese.average_pmi
+   :members:
+
+Threshold PMI
+^^^^^^^^^^^^^
+
+.. automodule:: translationese.threshold_pmi
+   :members:
 
 Interference
 ------------

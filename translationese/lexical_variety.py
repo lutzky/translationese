@@ -1,4 +1,4 @@
-"""
+"""\
 Lexical variety attempts to capture the hypothesis that original texts are
 richer in terms of vocabulary. This is done by comparing the number of `tokens`
 (words, punctuation, etc.) and `types` (of different tokens).

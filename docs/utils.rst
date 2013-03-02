@@ -17,6 +17,18 @@ Main translationese module
 .. automodule:: translationese
    :members:
 
+Word ranks
+----------
+
+.. automodule:: translationese.word_ranks
+   :members:
+
+Utilities
+---------
+
+.. automodule:: translationese.utils
+   :members:
+
 Memoize
 -------
 

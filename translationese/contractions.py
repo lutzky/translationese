@@ -1,11 +1,11 @@
 """\
-Implementation of Lexical Variety hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.3 Normalization, Contractions
+The ratio of contracted forms to their counterpart full form(s).  If the full
+form has zero occurrences, its count is changed to 1.
 """
 
-import nltk
+import os
+if os.environ.get("READTHEDOCS", None) != 'True':
+    import nltk
 
 CONTRACTIONS = {
  "i'm": ["i am"],
@@ -50,8 +50,10 @@ CONTRACTIONS = {
  "doesn't": [ "does not" ],
  "didn't": [ "did not" ],
 }
+"""List of contracted forms used in this hypothesis."""
 
 def quantify(analysis):
+    """Quantify contractions."""
     histogram = analysis.bigrams()
 
     def contraction_ratio(contraction):

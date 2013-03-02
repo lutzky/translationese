@@ -155,7 +155,8 @@ class Analysis(object):
         return result
 
     def pmi(self):
-        """PMI, as calculated in the article."""
+        """Returns a dictionary with the PMI of each bigram. Given a bigram
+        ``w1,w2``, its PMI is ``log(freq(w1w2)/(freq(w1)*freq(w2)))``."""
         num_bigrams = float(len(self.tokens()) - 1)
         bigrams_normalized = dict([ (x, y / num_bigrams)
                                     for (x, y) in self.bigrams().items() ])

@@ -1,8 +1,6 @@
 """\
-Implementation of Cohesive Markers hypothesis.
-
-Origin: On the Features of Translationese, VV, NO & SW
-        4.2 Explicitation, Cohesive Markers
+Translations are known to excessively use certain cohesive markers (see list
+below).
 """
 
 import nltk
@@ -48,8 +46,10 @@ COHESIVE_MARKERS = ["as for",
 "with regard to",
 "yet",
 "concerning"]
+"""List of cohesive markers"""
 
 def quantify(analysis):
+    """Quantify usage of cohesive markers."""
     result = {}
     
     tokenized_markers = [(marker,nltk.word_tokenize(marker)) for marker in COHESIVE_MARKERS]

@@ -6,8 +6,8 @@ like so:
 
 .. code-block:: bash
 
-    sudo pip install nose
-    nosetests -v
+    $ sudo pip install nose
+    $ nosetests -v
 
 Furthermore, if you use PyDev, it is recommended to configure it to use
 ``nosetests`` as the test runner, and have it re-run all tests whenever a file

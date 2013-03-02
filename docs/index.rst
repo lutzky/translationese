@@ -26,6 +26,9 @@ in English ("`O`" texts) and texts written in foreign languages and were
 translated into English ("`T`" texts). This is done based on features and
 characteristics found within the texts.
 
+This project was designed to be easily extensible by adding new hypotheses.
+See :ref:`extending`.
+
 Getting started
 ---------------
 

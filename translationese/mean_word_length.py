@@ -1,19 +1,31 @@
 """\
-Implementation of Mean Word Length hypothesis.
+We assume that translated texts use simpler words, in particular shorter ones.
+Punctuation marks are excluded from the tokens in this feature.  """
 
-Origin: On the Features of Translationese, VV, NO & SW
-        4.1 Simplification, Mean Word Length
-"""
-
-import nltk
+import os
+if os.environ.get("READTHEDOCS", None) != 'True':
+    import nltk
 
 def is_contraction_suffix(token):
+    """Is ``token`` a contraction suffix?
+
+    >>> is_contraction_suffix("'s") # let's
+    True
+    >>> is_contraction_suffix("n't") # don't
+    True
+    """
     return "'" in token and token.replace("'", "").isalpha()
 
 def is_hyphenated_word(token):
+    """Is ``token`` a hyphenated word?
+
+    >>> is_hyphenated_word("ad-hoc")
+    True
+    """
     return "-" in token and token.replace("-", "").isalpha()
 
 def quantify(analysis):
+    """Quantify mean word length."""
     count = 0
     total = 0
     for token in analysis.tokens():
