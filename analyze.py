@@ -142,6 +142,8 @@ def main(analyzer_module, o_dir, t_dir, stream=sys.stdout, variant=None,
     print_results(results, stream, timer)
 
 def import_translationese_module(module_name):
+    if ':' in module_name:
+        module_name = module_name.split(':')[0]
     return __import__('translationese.%s' % module_name,
                       fromlist='translationese')
 
@@ -155,7 +157,8 @@ def module_proper_name(module_name):
     if hasattr(module, 'quantify'):
         return module_name
     elif hasattr(module, 'quantify_variant'):
-        return '%s*' % module_name
+        variants = [ '%s:%d' % (module_name, v) for v in module.VARIANTS ]
+        return ' '.join(variants)
     else:
         return None
 
@@ -171,7 +174,7 @@ def available_modules_imported():
         if hasattr(module, 'quantify') or hasattr(module, 'quantify_variant'):
             yield module
 
-def get_output_stream(outfile, variant, module_name, dest_dir=None):
+def get_output_stream(outfile, module_name, dest_dir=None):
     if dest_dir:
         try:
             os.makedirs(dest_dir)
@@ -184,10 +187,7 @@ def get_output_stream(outfile, variant, module_name, dest_dir=None):
         dest_dir = '.'
 
     if not outfile:
-        if variant is None:
-            outfile = "%s.arff" % module_name
-        else:
-            outfile = "%s_%d.arff" % (module_name, variant)
+        outfile = "%s.arff" % module_name
 
     outstream = open(os.path.join(dest_dir, outfile), "w")
 
@@ -200,10 +200,11 @@ def analyze_all_modules(o_dir, t_dir, dest_dir):
         if hasattr(module, 'VARIANTS'):
             for v in module.VARIANTS:
                 logging.info("Variant %d", v)
-                outfile = get_output_stream(None, v, module_name, dest_dir)
+                outfile = get_output_stream(None, '%s:%d' % (module_name, v),
+                                            dest_dir)
                 cmdline_main_one_module(module, o_dir, t_dir, v, outfile)
         else:
-            outfile = get_output_stream(None, None, module_name, dest_dir)
+            outfile = get_output_stream(None, module_name, dest_dir)
             cmdline_main_one_module(module, o_dir, t_dir, None, outfile)
 
 def cmdline_main():
@@ -222,17 +223,15 @@ def cmdline_main():
     '''
 
     epilog = '''
-    VARIANT is required for modules marked with '*'. VARIANTS are 0-indexed.
-    By default, OUTFILE is MODULE_NAME.arff, with an added variant number if
-    present (e.g. MODULE_NAME_1.arff).
+    Modules marked with a colon (:) indicate variants of the same module.
+    OUTFILE is MODULE_NAME.arff (including variant, if present).
     '''
 
     parser = ArgumentParser(description=description, epilog=epilog)
-    parser.add_argument('module_name', type=str, metavar='MODULE',
+    parser.add_argument('module_names', type=str, metavar='MODULE',
+                        nargs='+',
                         help='Available modules: %s (or ALL)' \
                         % formatted_available_modules())
-    parser.add_argument("-v", "--variant", dest="variant", default=None,
-                        type=int, help="Variant for analysis module")
     parser.add_argument("-t", dest="t_dir", default='./t/',
                         help="Directory of T (translated) texts " \
                              "[default: %(default)s]")
@@ -250,14 +249,19 @@ def cmdline_main():
         if not os.path.isdir(dir_path):
             parser.error("No such directory %r (run with --help)" % dir_path)
 
-    if args.module_name == 'ALL':
+    if args.module_names[0] == 'ALL':
         analyze_all_modules(args.o_dir, args.t_dir, args.dest_dir)
     else:
-        outfile = get_output_stream(args.outfile, args.variant,
-                                    args.module_name, args.dest_dir)
-        module = import_translationese_module(args.module_name)
-        cmdline_main_one_module(module, args.o_dir, args.t_dir,
-                                args.variant, outfile)
+        for module_name in args.module_names:
+            outfile = get_output_stream(args.outfile, module_name,
+                                        args.dest_dir)
+            module = import_translationese_module(module_name)
+            if ":" in module_name:
+                variant = int(module_name.split(":")[1])
+            else:
+                variant = None
+            cmdline_main_one_module(module, args.o_dir, args.t_dir,
+                                    variant, outfile)
 
 def cmdline_main_one_module(module, o_dir, t_dir, variant, outfile):
     logging.info("Output will be written to %s", outfile.name)

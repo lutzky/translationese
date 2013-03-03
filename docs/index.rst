@@ -38,10 +38,10 @@ For basic usage, place several originally-english (`O`) files in
 
 .. code-block:: bash
 
-    $ ./analyze.py -o ~/original -t ~/translated -v 0 lexical_variety
-    $ weka lexical_variety_0.arff
+    $ ./analyze.py -o ~/original -t ~/translated lexical_variety:0
+    $ weka lexical_variety:0.arff
     # Or, for immediate textual results:
-    $ weka -c weka.classifiers.functions.SMO -- -t lexical_variety_0.arff
+    $ weka -c weka.classifiers.functions.SMO -- -t lexical_variety:0.arff
 
 This will run the :mod:`lexical_variety` quantifier, using variant 0, and
 run WEKA's SMO classifier-builder on the output.
