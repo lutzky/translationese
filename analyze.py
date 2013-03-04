@@ -108,9 +108,15 @@ def print_results(results, stream, timer):
 
     timer.start()
     for result, expected_class in results:
-        line = ",".join([str(result.get(x, 0)) for x in attributes])
+        stream.write('{')
 
-        print >> stream, "%s,%s" % (line, expected_class)
+        sparse_attributes = ['%d %s' % (i, result[attribute])
+                             for i, attribute in enumerate(attributes)
+                             if result.get(attribute, 0)]
+
+        sparse_attributes.append('%d %s' % (len(attributes), expected_class))
+        stream.write(', '.join(sparse_attributes))
+        print >> stream, '}'
         timer.increment()
     timer.stop()
 
